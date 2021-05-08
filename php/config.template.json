@@ -1,0 +1,9 @@
+{
+  "debug": false,
+  "db": {
+    "host": "localhost",
+    "user": "",
+    "password": "",
+    "database": "technews"
+  }
+}

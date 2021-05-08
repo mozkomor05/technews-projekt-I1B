@@ -1,0 +1,16 @@
+{
+  "name": "mozkomor05/technews-projekt-i1b",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "mozko",
+      "email": "d.moskor.st@spseiostrava.cz"
+    }
+  ],
+  "require": {
+    "ext-json": "*",
+    "sergeytsalkov/meekrodb": "^2.3"
+  }
+}

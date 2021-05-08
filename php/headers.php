@@ -1,0 +1,113 @@
+<?php
+
+function get_main_header()
+{
+    ?>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
+            <a class="navbar-brand mb-0 h1" href="/">
+                <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                TechNews
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar-content">
+                <ul class="navbar-nav ml-auto mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Domů</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Vypis-clanku">Výpis článků</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/O-Projektu">O projektu</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Kontakt
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Osobní kontakt</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="https://www.spseiostrava.cz/">SPŠEI Ostrava</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Hledat mezi články..."
+                           aria-label="Search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
+                </form>
+            </div>
+        </nav>
+        <div class="container py-5 main main-header-overlay">
+            <div class="content">
+                <div class="h1">Novinky ze světa techniky</div>
+                <p class="mt-5">Strojové učení, fyzika, matematika, IT průmysl... Pokrok v těchto oblastech stoupá
+                    exponenciálně a sledovat jej můžete zde.</p>
+                <a href="#" class="btn px-4">Objevit <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+    <?php
+}
+
+function get_header($page_data)
+{
+    $header_data = $page_data['header'] ?? [];
+    $bg_image = $header_data['image'] ?? '/assets/img/graphics/header.jpg';
+    $active = array_fill(0, 4, "");
+
+    if (isset($header_data['active_index']))
+        $active[$header_data['active_index']] = "active";
+    ?>
+    <header class="small-header" data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%">
+        <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
+            <a class="navbar-brand mb-0 h1" href="/">
+                <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                TechNews
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar-content">
+                <ul class="navbar-nav ml-auto mr-auto">
+                    <li class="nav-item <?= $active[0] ?>">
+                        <a class="nav-link" href="/">Domů</a>
+                    </li>
+                    <li class="nav-item <?= $active[1] ?>">
+                        <a class="nav-link" href="/Vypis-clanku">Výpis článků</a>
+                    </li>
+                    <li class="nav-item <?= $active[2] ?>">
+                        <a class="nav-link" href="/O-Projektu">O projektu</a>
+                    </li>
+                    <li class="nav-item dropdown <?= $active[3] ?>">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Kontakt
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item <?= $active[3] === "active" ? "active" : "" ?>" href="#">Osobní
+                                kontakt</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="https://www.spseiostrava.cz/">SPŠEI Ostrava</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Hledat mezi články..."
+                           aria-label="Search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
+                </form>
+            </div>
+        </nav>
+        <div class="overlay w-100 d-flex h-100 align-items-center justify-content-center mx-auto w-100">
+            <div class="h1"><?=$header_data['title'] ?? ""?></div>
+        </div>
+    </header>
+    <?php
+}
