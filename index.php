@@ -110,6 +110,6 @@ else
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
 <script src="/assets/js/parallax.min.js"></script>
-<script src="/assets/js/index.js"></script>
+<script src="/assets/js/index.js?v=<?= filemtime("./assets/js/index.js") ?>"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ $GLOBALS['page_data'] = [
     'main_page' => true
 ];
 ?>
-<div class="row">
+<div class="row" id="newest-anchor">
     <div class="col-lg-8">
         <h1>Nejnovější</h1>
         <p>Seznam nejnovějších článků.</p>

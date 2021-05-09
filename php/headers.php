@@ -48,7 +48,7 @@ function get_main_header()
                 <div class="h1">Novinky ze světa techniky</div>
                 <p class="mt-5">Strojové učení, fyzika, matematika, IT průmysl... Pokrok v těchto oblastech stoupá
                     exponenciálně a sledovat jej můžete zde.</p>
-                <a href="#" class="btn px-4">Objevit <i class="fas fa-arrow-right"></i></a>
+                <a href="#newest-anchor" class="btn px-4 js-anchor">Objevit <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </header>
