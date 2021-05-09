@@ -106,7 +106,7 @@ $GLOBALS['page_data'] = [
                     </div>
                     <div class="image col-4">
                         <a href="#">
-                            <img src="<?=$post['image']?>" alt="" class="w-100">
+                            <img src="<?= $post['image'] ?>" alt="" class="w-100">
                         </a>
                     </div>
                 </div>
@@ -118,10 +118,22 @@ $GLOBALS['page_data'] = [
     <div class="sidebar col-4">
         <div class="tags">
             <div class="h5">Štítky</div>
+            <?php
+            $tags = $db->query("
+                SELECT t.name, t.slug
+                FROM tags AS t
+                    LEFT JOIN tags_relationships AS tr ON t.id = tr.tag_id
+                GROUP BY t.id ORDER BY COUNT(tr.post_id) LIMIT 5
+            ");
+            ?>
             <ul>
-                <li>Machine learning</li>
-                <li>Math</li>
-                <li>Data Sceince</li>
+                <?php
+                foreach ($tags as $tag):
+                    ?>
+                    <li><a href="/Stitek/<?= ucfirst($tag['slug']) ?>"><?= $tag['name'] ?></a></li>
+                <?php
+                endforeach;
+                ?>
             </ul>
         </div>
         <div>

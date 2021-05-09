@@ -6,6 +6,11 @@ header {
     background-position-y: 25%;
 }
 
+header.small-header {
+    height: 300px;
+    background-position-y: 25%;
+}
+
 header nav.navbar {
     position: fixed;
     left: 0;
@@ -26,44 +31,68 @@ header nav .search-btn:hover {
     background: #240339;
 }
 
-header .main {
+header nav.navbar .dropdown-item.active, header nav.navbar .dropdown-item:focus {
+    background: #240339;
+}
+
+header .main-header-overlay {
     top: 72px;
     position: relative;
     color: white;
 }
 
-header .main .content {
+header .main-header-overlay .content {
     width: 500px;
 }
 
-header .main .h1 {
+header .main-header-overlay .h1, header.small-header .overlay .h1 {
     text-shadow: #fff 0 0 2px;
     -webkit-font-smoothing: antialiased;
     font-size: 3rem;
     color: white;
 }
 
-header .main p {
+header.small-header .overlay .h1 {
+    padding-top: 73px;
+    font-size: 4rem;
+}
+
+header.small-header {
+    background: none;
+    background-position-y: unset;
+}
+
+header.small-header .overlay {
+    background: rgba(80, 80, 80, 0.6);
+}
+
+header .main-header-overlay p {
     font-size: 1.2rem;
 }
 
-header .main .btn {
+header .main-header-overlay .btn {
     border-radius: 99em;
     border: 1px solid #562A72;
     color: #562A72;
 }
 
-header .main .btn:hover {
+header .main-header-overlay .btn:hover {
     background: #562A72;
     color: white;
 }
+
 
 h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
     color: #562A72;
 }
 
-.container .sidebar > div:last-child {
-    border-bottom: 1px solid #aaa;
+#advertisement {
+    border-top: 1px solid #aaa;
+    padding-top: 20px;
+}
+
+#advertisement .h5 {
+    margin-bottom: 0.8rem;
 }
 
 .container .sidebar > div {
@@ -134,4 +163,59 @@ footer a {
 footer .links ul {
     list-style-type: none;
     padding-left: 15px;
+}
+
+#posts-archive {
+    padding-top: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+#posts-archive > .row {
+    margin-bottom: 50px;
+    align-items: center;
+}
+
+#posts-archive .content h3 {
+    color: black;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#posts-archive .content p {
+    font-size: 0.9rem;
+}
+
+#posts-archive .info-icons {
+    font-size: 0.8rem;
+    color: gray;
+    padding-left: 2px;
+}
+
+#posts-archive .info-icons > div {
+    display: inline-block;
+}
+
+#posts-archive .info-icons > div:not(:last-child)::after {
+    content: '•';
+}
+
+#posts-archive .info-icons i {
+    color: black;
+}
+
+#posts-archive .tags {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+#posts-archive .tags i {
+    font-size: 0.7rem;
+}
+
+#posts-archive .image {
+    overflow: hidden;
+    height: 135px;
+    display: flex;
+    align-items: center;
 }
