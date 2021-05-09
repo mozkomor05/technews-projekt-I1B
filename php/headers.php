@@ -58,13 +58,17 @@ function get_main_header()
 function get_header($page_data)
 {
     $header_data = $page_data['header'] ?? [];
+    $show_header = ($header_data['hide_header'] ?? false) !== true;
     $bg_image = $header_data['image'] ?? '/assets/img/graphics/header.jpg';
     $active = array_fill(0, 4, "");
 
     if (isset($header_data['active_index']))
         $active[$header_data['active_index']] = "active";
     ?>
-    <header class="small-header" data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%">
+    <header class="small-header <?= $show_header ? "" : "h-auto" ?>"
+        <?php if ($show_header): ?>
+            data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%"
+        <?php endif; ?>>
         <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
             <a class="navbar-brand mb-0 h1" href="/">
                 <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -105,9 +109,15 @@ function get_header($page_data)
                 </form>
             </div>
         </nav>
-        <div class="overlay w-100 d-flex h-100 align-items-center justify-content-center mx-auto w-100">
-            <div class="h1"><?=$header_data['title'] ?? ""?></div>
-        </div>
+        <?php
+        if ($show_header):
+            ?>
+            <div class="overlay w-100 d-flex h-100 align-items-center justify-content-center mx-auto w-100">
+                <div class="h1"><?= $header_data['title'] ?? "" ?></div>
+            </div>
+        <?php
+        endif;
+        ?>
     </header>
     <?php
 }

@@ -5,8 +5,8 @@ $GLOBALS['page_data'] = [
     'main_page' => true
 ];
 ?>
-<div class=" row">
-    <div class="col-8">
+<div class="row">
+    <div class="col-lg-8">
         <h1>Nejnovější</h1>
         <p>Seznam nejnovějších článků.</p>
         <hr>
@@ -19,7 +19,7 @@ $GLOBALS['page_data'] = [
                          LEFT JOIN (SELECT obj_id, SUM(value) AS karma FROM karma WHERE type = "post" GROUP BY obj_id) AS k
                                    ON k.obj_id = p.id
                 GROUP BY p.id
-                ORDER BY p.date
+                ORDER BY p.date DESC
             ');
 
             function get_excerpt($content, $length = 40, $more = '...')
@@ -66,7 +66,7 @@ $GLOBALS['page_data'] = [
 
                 $tags_html = implode(', ', array_map(function ($tag) {
                     return "<a href=\"/Stitek/" . ucfirst($tag['slug']) . "\">" . $tag['name'] . "</a>";
-                }, $tags));
+                }, $tags)) ?: "Žádné";
 
                 $comments_in_czech = "Komentářů";
 
@@ -105,8 +105,8 @@ $GLOBALS['page_data'] = [
                         </div>
                     </div>
                     <div class="image col-4">
-                        <a href="#">
-                            <img src="<?= $post['image'] ?>" alt="" class="w-100">
+                        <a href="/Clanek/<?= ucfirst($post['slug']) ?>">
+                            <img src="<?= $post['image'] ?>" alt="<?= $post['title'] ?>" class="w-100">
                         </a>
                     </div>
                 </div>
@@ -115,34 +115,7 @@ $GLOBALS['page_data'] = [
             ?>
         </div>
     </div>
-    <div class="sidebar col-4">
-        <div class="tags">
-            <div class="h5">Štítky</div>
-            <?php
-            $tags = $db->query("
-                SELECT t.name, t.slug
-                FROM tags AS t
-                    LEFT JOIN tags_relationships AS tr ON t.id = tr.tag_id
-                GROUP BY t.id ORDER BY COUNT(tr.post_id) LIMIT 5
-            ");
-            ?>
-            <ul>
-                <?php
-                foreach ($tags as $tag):
-                    ?>
-                    <li><a href="/Stitek/<?= ucfirst($tag['slug']) ?>"><?= $tag['name'] ?></a></li>
-                <?php
-                endforeach;
-                ?>
-            </ul>
-        </div>
-        <div>
-            <div class="h5">Oblíbené</div>
-            <p>zde přijde seznam aktuálních článků</p>
-        </div>
-        <div id="advertisement">
-            <div class="h5">Reklama</div>
-            <endora>
-        </div>
-    </div>
+    <?php
+    get_the_sidebar();
+    ?>
 </div>

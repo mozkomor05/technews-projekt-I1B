@@ -38,4 +38,5 @@ $GLOBALS['page_data'] = [
         pharetra metus odio a lectus. Maecenas lorem. Morbi leo mi, nonummy eget tristique non, rhoncus non leo. Sed
         elit
     </p>
+    <endora>
 </div>

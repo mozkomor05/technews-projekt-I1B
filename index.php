@@ -8,9 +8,11 @@ if ($config->debug) {
 }
 
 require_once(__DIR__ . "/vendor/autoload.php");
-require_once(__DIR__ . '/php/headers.php');
 
 $db = new MeekroDB($config->db->host, $config->db->user, $config->db->password, $config->db->database, null, "utf8");
+
+require_once(__DIR__ . '/php/headers.php');
+require_once(__DIR__ . '/php/sidebar.php');
 
 function throw_err_404()
 {
@@ -63,8 +65,8 @@ if ($page_data['main_page'] ?? false)
 else
     get_header($page_data);
 ?>
-<main class="container py-5">
-    <?=$page_content?>
+<main class="py-5 <?= $page_data['no_container'] ?? false === true ? '' : 'container' ?>">
+    <?= $page_content ?>
 </main>
 
 

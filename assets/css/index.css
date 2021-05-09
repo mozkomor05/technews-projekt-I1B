@@ -4,6 +4,7 @@ header {
     background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)), url('/assets/img/graphics/header.jpg');
     background-size: 100% auto;
     background-position-y: 25%;
+    min-height: 73px;
 }
 
 header.small-header {
@@ -118,6 +119,21 @@ h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
     color: #666;
 }
 
+.container .sidebar .tags ul li a {
+    color: #666;
+    text-decoration: none;
+}
+
+.container .sidebar .tags ul li:hover {
+    color: black;
+    border-color: black;
+    cursor: pointer;
+}
+
+.container .sidebar .tags ul li:hover::before, .container .sidebar .tags ul li:hover a {
+    color: black;
+}
+
 .container .sidebar .tags ul li::before {
     content: '\f02c';
     font-family: "Font Awesome 5 Free";
@@ -176,7 +192,7 @@ footer .links ul {
     align-items: center;
 }
 
-#posts-archive .content h3 {
+#posts-archive .content h3, #popular-posts .content h3 {
     color: black;
     font-weight: bold;
     font-size: 1.2rem;
@@ -197,7 +213,8 @@ footer .links ul {
 }
 
 #posts-archive .info-icons > div:not(:last-child)::after {
-    content: '•';
+    content: '\00B7';
+    font-weight: bold;
 }
 
 #posts-archive .info-icons i {
@@ -218,4 +235,58 @@ footer .links ul {
     height: 135px;
     display: flex;
     align-items: center;
+}
+
+#popular-posts {
+    padding-top: 10px;
+}
+
+#popular-posts > .row {
+    margin: 0 0 10px 0;
+    align-items: center;
+}
+
+#popular-posts .image {
+    overflow: hidden;
+    height: 70px;
+    flex: 0 0 70px;
+    padding: 0;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+}
+
+#popular-posts .image a {
+    height: 100%;
+    width: 100%;
+}
+
+#popular-posts .image img {
+    min-height: 100%;
+    min-width: 100%;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+}
+
+#popular-posts .content {
+    padding-left: 0;
+}
+
+#popular-posts .content h3 {
+    margin: 0;
+}
+
+#popular-posts .content .read {
+    font-size: 0.8rem;
+}
+#parallax-image {
+    width: 100%;
+    height: 500px;
+}
+
+#article-header {
+    padding-left: 10rem;
+    padding-right: 10rem;
 }
