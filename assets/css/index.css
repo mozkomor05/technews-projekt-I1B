@@ -357,12 +357,12 @@ footer .links ul {
     width: 2rem;
     margin: 0 0.4rem;
     height: 2rem;
+    cursor: pointer;
 }
 
 #article-content .thumb-rating i {
     font-size: 2rem;
     transform-origin: left center;
-    cursor: pointer;
     position: absolute;
     transition: transform .4s ease;
 }
