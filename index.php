@@ -11,6 +11,7 @@ require_once(__DIR__ . "/vendor/autoload.php");
 
 $db = new MeekroDB($config->db->host, $config->db->user, $config->db->password, $config->db->database, null, "utf8");
 
+require_once(__DIR__ . '/php/post-tools.php');
 require_once(__DIR__ . '/php/headers.php');
 require_once(__DIR__ . '/php/sidebar.php');
 
@@ -43,6 +44,13 @@ $page_content = ob_get_clean();
 <head>
     <meta charset='utf-8'>
     <meta name="author" content="David Moškoř">
+    <?php
+    foreach ($page_data['og_meta'] ?? [] as $property => $content):
+        ?>
+        <meta property="og:<?= $property ?>" content="<?= $content ?>">
+    <?php
+    endforeach;
+    ?>
 
     <title><?= $page_data['title'] ?? 'TechNews - Pokrok a inovace, vše na jednom místě' ?></title>
 
@@ -56,6 +64,7 @@ $page_content = ob_get_clean();
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico?v=2"/>
     <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
@@ -101,7 +110,7 @@ else
         </div>
     </div>
     <div class="copyright w-100 text-center">
-        &copy; Vytvořil David Moškoř 2020
+        &copy; Vytvořil David Moškoř 2021
     </div>
 </footer>
 

@@ -6,7 +6,7 @@ function get_the_sidebar()
 
     ?>
     <div class="sidebar col-lg-4">
-        <div class="tags">
+        <div class="tags-list">
             <div class="h5">Populární štítky</div>
             <?php
             $tags = $db->query("
