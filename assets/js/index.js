@@ -51,7 +51,19 @@ $(document).ready(function () {
         if ($parent.hasClass('voted'))
             return;
 
-        $this.addClass("animate");
-        $parent.addClass('voted');
+        $.post("/php/ajax.php", {
+            action: "process_vote",
+            post_id: $parent.attr('data-id'),
+            vote: $this.has('.fa-thumbs-up').length ? 1 : -1,
+            type: 'post'
+        }, function (res) {
+            if (res.success) {
+                const $votes = $this.next('.votes');
+
+                $this.addClass("animate");
+                $votes.text(parseInt($votes.text()) + 1);
+                $parent.addClass('voted');
+            }
+        });
     })
 });

@@ -473,3 +473,16 @@ footer .links ul {
     align-items: center;
     margin-left: 5px;
 }
+
+#article-content .thumb-rating.voted .icons {
+    cursor: default;
+}
+
+#article-content .thumb-rating.voted .icons.vote .far {
+    display: none;
+}
+
+#article-content .thumb-rating.voted .icons.vote .fas {
+    transform: none;
+    opacity: 1;
+}

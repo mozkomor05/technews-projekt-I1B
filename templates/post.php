@@ -112,7 +112,7 @@ $GLOBALS['page_data'] = [
     <div data-parallax="scroll" data-image-src="<?= $post['image'] ?>"
          id="parallax-image"></div>
 
-    <div id="article-content" class="container pt-5">
+    <div id="article-content" class="container pt-5 pb-5">
         <div class="row">
             <div class="col">
                 <div class="content pb-2">
@@ -120,19 +120,28 @@ $GLOBALS['page_data'] = [
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="col thumb-rating">
+                    <?php
+                    $votes_cookie = json_decode($_COOKIE['votes'] ?? '[]');
+                    $vote_row = $db->queryFirstRow("
+                        SELECT *
+                        FROM karma
+                        WHERE obj_id = %i AND ip = %s AND type = 'post'
+                    ", $post['id'], $_SERVER['REMOTE_ADDR']);
+                    $voted = !empty($vote_row) || in_array($post['id'], $votes_cookie);
+                    ?>
+                    <div class="col thumb-rating <?= $voted ? "voted" : "" ?>" data-id="<?= $post['id'] ?>">
                         Názor na článek:
                         <span class="like text-success">
-                            <div class="icons">
+                            <div class="icons <?= $vote_row['value'] == 1 ? "vote" : "" ?>">
                                 <i class="far fa-thumbs-up"></i><i class="fas fa-thumbs-up"></i>
                             </div>
-                            (<?= $karma['positive'] ?>)
+                            (<span class="votes"><?= $karma['positive'] ?></span>)
                         </span>
                         <span class="dislike text-danger">
-                            <div class="icons">
+                            <div class="icons <?= $vote_row['value'] == -1 ? "vote" : "" ?>">
                                 <i class="far fa-thumbs-down"></i><i class="fas fa-thumbs-down"></i>
                             </div>
-                            (<?= $karma['negative'] ?>)
+                            (<span class="votes"><?= $karma['negative'] ?></span>)
                         </span>
                     </div>
                     <div class="col-auto share-social-buttons">
@@ -146,5 +155,8 @@ $GLOBALS['page_data'] = [
             get_the_sidebar();
             ?>
         </div>
+    </div>
+    <div id="article-comment">
+        <div class="h3">Komentáře</div>
     </div>
 </article>
