@@ -1,8 +1,5 @@
 <?php
 require_once(__DIR__ . '/php/app_load.php');
-require_once(__DIR__ . '/php/post-tools.php');
-require_once(__DIR__ . '/php/headers.php');
-require_once(__DIR__ . '/php/sidebar.php');
 
 function throw_err_404()
 {
@@ -45,8 +42,8 @@ $page_content = ob_get_clean();
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="/assets/css/index.css?=<?php echo filemtime('./assets/css/index.css') ?>" rel="stylesheet">
 
@@ -71,7 +68,7 @@ else
 <footer class="mt-5">
     <div class="container py-5">
         <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-6 pe-4">
                 <div class="h3">O stránce</div>
                 <p>
                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse sagittis ultrices augue. Cum
@@ -104,8 +101,8 @@ else
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
 <script src="/assets/js/parallax.min.js"></script>
 <script src="/assets/js/index.js?v=<?= filemtime("./assets/js/index.js") ?>"></script>

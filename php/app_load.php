@@ -10,3 +10,7 @@ if ($config->debug) {
 require_once(__DIR__ . "/../vendor/autoload.php");
 
 $db = new MeekroDB($config->db->host, $config->db->user, $config->db->password, $config->db->database, null, "utf8");
+
+require_once(__DIR__ . '/post-tools.php');
+require_once(__DIR__ . '/headers.php');
+require_once(__DIR__ . '/sidebar.php');

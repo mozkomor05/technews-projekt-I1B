@@ -58,7 +58,7 @@ $GLOBALS['page_data'] = [
                             </div>
                             <div>
                                 <i class="far fa-thumbs-up"></i>
-                                <span class="text-<?= $post['karma'] < 0 ? "danger" : "success" ?> font-weight-bold"><?= $post['karma'] ?></span>
+                                <span class="text-<?= $post['karma'] < 0 ? "danger" : "success" ?> fw-bold"><?= $post['karma'] ?></span>
                                 hodnocení
                             </div>
                         </div>

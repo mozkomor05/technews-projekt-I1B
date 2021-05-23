@@ -58,3 +58,31 @@ function process_vote()
         'success' => true
     ]));
 }
+
+function list_comments()
+{
+    global $db;
+
+    $post_id = $_POST['post_id'] ?? null;
+
+    if (empty($post_id))
+        bad_request();
+
+    /*
+     * Bohužel je třeba získat vše najednou. Abych limitoval počet komentářů, musel bych limitovat počet parentů a
+     * k nim rekurizvně dohlédávat childy přes CTE. To se mi podařilo, ale implementace byla zbytečně náročná.
+     */
+    $comments = $db->query(
+        "SELECT comment_id, reply, author_name, content, created, author_email FROM comments WHERE post_id = %i ORDER BY created DESC",
+        $post_id
+    );
+
+    $comments = array_map(function ($comment) {
+        $comment['created_formatted'] = nice_date($comment['created']);
+        $comment['email_hash'] = md5($comment['author_email']);
+        unset($comment['author_email']);
+        return $comment;
+    }, $comments);
+
+    die(json_encode($comments));
+}

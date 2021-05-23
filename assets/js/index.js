@@ -1,18 +1,19 @@
 $(document).ready(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+
     const headerOuterHeight = $('header nav.navbar').outerHeight(true);
 
-    $('a.js-anchor').each(function () {
-        $(this).on('click', function (event) {
-            event.preventDefault();
+    $('body').on('click', 'a.js-anchor', function (event) {
+        event.preventDefault();
 
-            $([document.documentElement, document.body]).animate({
-                scrollTop: $(this.hash).offset().top - headerOuterHeight
-            }, 1000);
-        })
-    });
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(this.hash).offset().top - headerOuterHeight
+        }, 1000);
+    })
 
     const $readingTime = $('.reading-time'),
-        $articleContent = $('#article-content .content');
+        $articleWrapper = $('#article-content'),
+        $articleContent = $articleWrapper.find('.content');
 
     if ($readingTime.length && $articleContent.length) {
         const readTime = Math.ceil($articleContent.text().split(/\s+/).length / 200);
@@ -53,7 +54,7 @@ $(document).ready(function () {
 
         $.post("/php/ajax.php", {
             action: "process_vote",
-            post_id: $parent.attr('data-id'),
+            post_id: $articleWrapper.attr('data-id'),
             vote: $this.has('.fa-thumbs-up').length ? 1 : -1,
             type: 'post'
         }, function (res) {
@@ -66,4 +67,117 @@ $(document).ready(function () {
             }
         });
     })
+
+    $('form').submit(function (event) {
+        if (!this.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        $(this).addClass('was-validated')
+    });
+
+    const $commentsWrapper = $('#article-comments');
+
+    if ($commentsWrapper.length) {
+        const $commentsSection = $commentsWrapper.find('.comments-section');
+        const $commentTemplateEl = $commentsSection.children('.comment');
+        const $commentTemplate = $commentTemplateEl.clone();
+        $commentTemplateEl.remove();
+
+        $.post('/php/ajax.php', {
+            action: 'list_comments',
+            post_id: $articleWrapper.attr('data-id')
+        }, "json").done(res => {
+            const flatComments = JSON.parse(res), comments = [], childrenComments = [];
+
+            flatComments.forEach(comment => {
+                if (comment['reply'] === null) {
+                    comment.children = [];
+                    comments.push(comment);
+                }
+                else
+                    childrenComments.push(comment);
+            })
+
+            childrenComments.forEach(childComment => {
+                let reply = childComment;
+                let parentId = reply['reply'];
+
+
+                while (true) {
+                    const parent = childrenComments.find(c => {
+                        return c['comment_id'] === parentId;
+                    });
+
+                    if (parent === undefined)
+                        break;
+
+                    parentId = parent['reply'];
+                }
+
+                const parent = comments.find(c => {
+                    return c['comment_id'] === parentId;
+                });
+
+                parent.children.unshift(reply);
+            });
+
+            const commentElFromTemplate = function (data) {
+                const src = 'https://www.gravatar.com/avatar/' + data['email_hash'] + '?d=wavatar&s=64';
+                const $comment = $commentTemplate.clone();
+
+                $comment.attr('id', 'comment-' + data['comment_id']);
+                $comment.find('.image').attr('src', src);
+                $comment.find('.date').text(data['created_formatted']);
+                $comment.find('.name').text(data['author_name']);
+                $comment.find('.content').text(data['content']);
+
+                if (data['reply'] !== null) {
+                    $comment.addClass('reply');
+                    const $replyLink = $comment.find('.reply-to-comment');
+                    $replyLink.attr('href', '#comment-' + data['reply'])
+                    $replyLink.text($('#comment-' + data['reply']).find('.name').text());
+
+                    $replyLink.on('click', function() {
+                        const $highlightComment = $(this.hash);
+                        $highlightComment.addClass("highlight");
+                        setTimeout(function () {
+                            $highlightComment.removeClass("highlight");
+                        }, 2000);
+                    });
+                }
+
+                $comment.show();
+
+                return $comment;
+            }
+
+            const loadCommentsBatch = function () {
+                if (!comments.length) {
+                    $commentsSection.text("Zatím tu nejsou žádné komentáře. Buďte první, kdo se podělí o svůj názor!");
+                    return false;
+                }
+
+                for (let i = 0; i < 10; i++) {
+                    if (!comments.length)
+                        return false;
+
+                    const comment = comments.shift();
+                    const $comment = commentElFromTemplate(comment);
+
+                    $comment.appendTo($commentsSection);
+
+                    comment.children.forEach(reply => {
+                        const $reply = commentElFromTemplate(reply);
+                        $reply.appendTo($commentsSection);
+                    });
+                }
+
+                return true;
+            };
+
+            loadCommentsBatch();
+        });
+    }
 });

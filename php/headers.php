@@ -5,7 +5,7 @@ function get_main_header()
     ?>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
-            <a class="navbar-brand mb-0 h1" href="/">
+            <a class="navbar-brand mb-0" href="/">
                 <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
                 TechNews
             </a>
@@ -14,7 +14,7 @@ function get_main_header()
             </button>
 
             <div class="collapse navbar-collapse" id="navbar-content">
-                <ul class="navbar-nav ml-auto mr-auto">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item active">
                         <a class="nav-link" href="/">Domů</a>
                     </li>
@@ -36,8 +36,8 @@ function get_main_header()
                         </div>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Hledat mezi články..."
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Hledat mezi články..."
                            aria-label="Search">
                     <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
                 </form>
@@ -70,7 +70,7 @@ function get_header($page_data)
             data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%"
         <?php endif; ?>>
         <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
-            <a class="navbar-brand mb-0 h1" href="/">
+            <a class="navbar-brand mb-0" href="/">
                 <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
                 TechNews
             </a>
@@ -79,7 +79,7 @@ function get_header($page_data)
             </button>
 
             <div class="collapse navbar-collapse" id="navbar-content">
-                <ul class="navbar-nav ml-auto mr-auto">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item <?= $active[0] ?>">
                         <a class="nav-link" href="/">Domů</a>
                     </li>
@@ -102,9 +102,9 @@ function get_header($page_data)
                         </div>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Hledat mezi články..."
-                           aria-label="Search">
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Hledat mezi články..."
+                           aria-label="Hledat">
                     <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
                 </form>
             </div>
