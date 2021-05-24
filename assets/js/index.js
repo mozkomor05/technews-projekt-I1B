@@ -1,14 +1,23 @@
+function grecaptchaValidated() {
+    const $recaptcha = $('.g-recaptcha');
+    $recaptcha.removeClass("is-invalid");
+    $recaptcha.addClass("is-valid");
+}
+
 $(document).ready(function () {
     $('[data-bs-toggle="tooltip"]').tooltip();
 
     const headerOuterHeight = $('header nav.navbar').outerHeight(true);
 
+    function scrollToElement(element) {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: element.offset().top - headerOuterHeight
+        }, 1000);
+    }
+
     $('body').on('click', 'a.js-anchor', function (event) {
         event.preventDefault();
-
-        $([document.documentElement, document.body]).animate({
-            scrollTop: $(this.hash).offset().top - headerOuterHeight
-        }, 1000);
+        scrollToElement($(this.hash));
     })
 
     const $readingTime = $('.reading-time'),
@@ -68,65 +77,92 @@ $(document).ready(function () {
         });
     })
 
-    $('form').submit(function (event) {
-        if (!this.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-        }
+    $('form').each(function () {
+        this.addEventListener('click', function (event) {
+            const $this = $(this);
+            const $recaptcha = $this.find('.g-recaptcha');
+            const failedRecaptcha = $recaptcha.length && !grecaptcha.getResponse().length;
 
-        $(this).addClass('was-validated')
+            if (!this.checkValidity() || failedRecaptcha) {
+                if (failedRecaptcha) {
+                    $recaptcha.addClass("is-invalid");
+                    $recaptcha.removeClass("is-valid");
+                } else
+                    grecaptchaValidated.apply($recaptcha);
+
+                event.preventDefault()
+                event.stopPropagation()
+            }
+
+            $this.addClass('was-validated')
+        }, true);
     });
 
     const $commentsWrapper = $('#article-comments');
 
     if ($commentsWrapper.length) {
         const $commentsSection = $commentsWrapper.find('.comments-section');
+        const $showMore = $commentsWrapper.find('.show-more button');
+        const $commentForm = $commentsWrapper.find('#comment-form');
+        const $replyToInput = $commentForm.find('#reply-to');
+
         const $commentTemplateEl = $commentsSection.children('.comment');
         const $commentTemplate = $commentTemplateEl.clone();
+        const $alertContainer = $commentsWrapper.find('#reply-alert');
+        const $alertTemplateEl = $alertContainer.children('.alert');
+        const $alertTemplate = $alertTemplateEl.clone();
+
         $commentTemplateEl.remove();
+        $alertTemplateEl.remove();
 
         $.post('/php/ajax.php', {
             action: 'list_comments',
             post_id: $articleWrapper.attr('data-id')
         }, "json").done(res => {
-            const flatComments = JSON.parse(res), comments = [], childrenComments = [];
+            const prepareCommentsArray = function (flatComments) {
+                const comments = [], childrenComments = [];
 
-            flatComments.forEach(comment => {
-                if (comment['reply'] === null) {
-                    comment.children = [];
-                    comments.push(comment);
-                }
-                else
-                    childrenComments.push(comment);
-            })
+                flatComments.forEach(comment => {
+                    if (comment['reply'] === null) {
+                        comment.children = [];
+                        comments.push(comment);
+                    } else
+                        childrenComments.push(comment);
+                })
 
-            childrenComments.forEach(childComment => {
-                let reply = childComment;
-                let parentId = reply['reply'];
+                childrenComments.forEach(childComment => {
+                    let reply = childComment;
+                    let parentId = reply['reply'];
 
 
-                while (true) {
-                    const parent = childrenComments.find(c => {
+                    while (true) {
+                        const parent = childrenComments.find(c => {
+                            return c['comment_id'] === parentId;
+                        });
+
+                        if (parent === undefined)
+                            break;
+
+                        parentId = parent['reply'];
+                    }
+
+                    const parent = comments.find(c => {
                         return c['comment_id'] === parentId;
                     });
 
-                    if (parent === undefined)
-                        break;
-
-                    parentId = parent['reply'];
-                }
-
-                const parent = comments.find(c => {
-                    return c['comment_id'] === parentId;
+                    parent.children.unshift(reply);
                 });
 
-                parent.children.unshift(reply);
-            });
+                return comments;
+            }
+
+            const comments = prepareCommentsArray(JSON.parse(res));
 
             const commentElFromTemplate = function (data) {
                 const src = 'https://www.gravatar.com/avatar/' + data['email_hash'] + '?d=wavatar&s=64';
                 const $comment = $commentTemplate.clone();
 
+                $comment.attr('data-id', data['comment_id']);
                 $comment.attr('id', 'comment-' + data['comment_id']);
                 $comment.find('.image').attr('src', src);
                 $comment.find('.date').text(data['created_formatted']);
@@ -139,8 +175,12 @@ $(document).ready(function () {
                     $replyLink.attr('href', '#comment-' + data['reply'])
                     $replyLink.text($('#comment-' + data['reply']).find('.name').text());
 
-                    $replyLink.on('click', function() {
+                    $replyLink.on('click', function () {
                         const $highlightComment = $(this.hash);
+
+                        if ($highlightComment.hasClass("highlight"))
+                            return;
+
                         $highlightComment.addClass("highlight");
                         setTimeout(function () {
                             $highlightComment.removeClass("highlight");
@@ -152,16 +192,10 @@ $(document).ready(function () {
 
                 return $comment;
             }
-
-            const loadCommentsBatch = function () {
-                if (!comments.length) {
-                    $commentsSection.text("Zatím tu nejsou žádné komentáře. Buďte první, kdo se podělí o svůj názor!");
-                    return false;
-                }
-
-                for (let i = 0; i < 10; i++) {
+            const loadCommentsBatch = function (batchSize = 10) {
+                for (let i = 0; i < batchSize; i++) {
                     if (!comments.length)
-                        return false;
+                        break;
 
                     const comment = comments.shift();
                     const $comment = commentElFromTemplate(comment);
@@ -174,10 +208,89 @@ $(document).ready(function () {
                     });
                 }
 
-                return true;
+                return comments.length > 0;
             };
+            const loadMore = function (num = 10) {
+                if (loadCommentsBatch(num))
+                    $showMore.show();
+                else
+                    $showMore.hide();
+            }
 
-            loadCommentsBatch();
+            if (!comments.length) {
+                $commentsSection.text("Zatím tu nejsou žádné komentáře. Buďte první, kdo se podělí o svůj názor!");
+                return false;
+            } else {
+                $showMore.on('click', function () {
+                    loadMore(10);
+                });
+
+                loadMore(5);
+            }
+
+            $('body').on('click', '.comments-section-reply-btn', function () {
+                const $commentEl = $(this).closest('.comment');
+                const $commentId = $commentEl.attr('data-id');
+
+                const $alert = $alertTemplate.clone();
+                const $alertLink = $alert.find('.reply-to');
+
+                $replyToInput.val($commentId);
+
+                $alertLink.text($commentEl.find('.name').text());
+                $alertLink.attr('href', '.comment-' + $commentId);
+                $alert.appendTo($alertContainer);
+                $alert.fadeIn();
+
+                $alert.on('close.bs.alert', function () {
+                    $replyToInput.val("-1");
+                });
+
+                scrollToElement($commentForm);
+            });
+
+            $commentForm.submit(function (event) {
+                event.preventDefault();
+
+                const ajaxData = $commentForm.serializeArray();
+                ajaxData.push({
+                    name: 'action',
+                    value: 'submit_comment'
+                });
+                ajaxData.push({
+                    name: 'post_id',
+                    value: $articleWrapper.attr('data-id')
+                });
+
+                $.post("/php/ajax.php", $.param(ajaxData)).done(submitRes => {
+                    const resComment = JSON.parse(submitRes)['comment'];
+                    const $comment = commentElFromTemplate(resComment);
+
+                    if (resComment['reply'] === null)
+                        $comment.prependTo($commentsSection);
+                    else {
+                        const $replyTo = $('#comment-' + resComment['reply']);
+                        const $nextComment = $replyTo.nextAll(":not(.reply)").first();
+
+                        if ($nextComment.length)
+                            $comment.insertBefore($nextComment);
+                        else
+                            $comment.appendTo($commentsSection);
+                    }
+
+                    grecaptcha.reset();
+                    $commentForm.trigger("reset");
+                    $commentForm.removeClass('was-validated');
+
+                    const $alert = $alertContainer.find('.alert');
+                    $alert.fadeOut();
+                    $alert.remove();
+
+                    scrollToElement($("#comment-" + resComment['comment_id']));
+                }).catch(err => {
+                    console.log(err);
+                });
+            });
         });
     }
 });

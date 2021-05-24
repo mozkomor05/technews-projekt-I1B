@@ -25,12 +25,13 @@ header nav.navbar {
     border-bottom: 1px solid #240339;
 }
 
-header nav .search-btn {
+.btn {
     color: #240339;
     border-color: #240339;
+    background-color: transparent;
 }
 
-header nav .search-btn:hover {
+.btn:hover {
     color: white;
     border-color: #240339;
     background: #240339;
@@ -508,45 +509,45 @@ footer .links ul {
     height: 200px;
 }
 
-#article-content .comments-section .comment {
+#article-comments .comments-section .comment {
     padding-left: 10px;
     transition: background-color ease-in-out 0.3s;
 }
 
-#article-content .comments-section .comment.highlight {
+#article-comments .comments-section .comment.highlight {
     background-color: rgba(255, 0, 0, 0.1);
 }
 
-#article-content .comments-section .comment ul li:not(:last-child)::after {
+#article-comments .comments-section .comment ul li:not(:last-child)::after {
     content: '|';
     font-weight: bold;
     padding-left: .2rem;
 }
 
-#article-content .comments-section .comment .list-inline-item {
+#article-comments .comments-section .comment .list-inline-item {
     font-size: 0.8rem;
 }
 
-#article-content .comments-section .comment .list-inline-item:not(:last-child) {
+#article-comments .comments-section .comment .list-inline-item:not(:last-child) {
     margin-right: 0;
     padding: 0;
 }
 
-#article-content .comments-section .comment .image {
+#article-comments .comments-section .comment .image {
     border-radius: 10px;
 }
-#article-content .comments-section .comment .reply-to {
+#article-comments .comments-section .comment .reply-to {
     display: none;
 }
 
-#article-content .comments-section .comment.reply .reply-to {
+#article-comments .comments-section .comment.reply .reply-to {
     display: inline-block;
 }
 
-#article-content .comments-section .comment.reply {
+#article-comments .comments-section .comment.reply {
    margin-left: 20px;
 }
 
-#article-content .comments-section .comment:not(:last-child) {
+#article-comments .comments-section .comment:not(:last-child) {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }

@@ -106,5 +106,6 @@ else
         crossorigin="anonymous"></script>
 <script src="/assets/js/parallax.min.js"></script>
 <script src="/assets/js/index.js?v=<?= filemtime("./assets/js/index.js") ?>"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>

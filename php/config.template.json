@@ -5,5 +5,9 @@
     "user": "",
     "password": "",
     "database": "technews"
+  },
+  "recaptcha": {
+    "site": "",
+    "secret": ""
   }
 }

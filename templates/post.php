@@ -1,5 +1,5 @@
 <?php
-global $db;
+global $db, $config;
 
 $slug = strtolower($_GET['slug'] ?? "");
 $post = null;
@@ -164,7 +164,7 @@ $GLOBALS['page_data'] = [
                         Přidejte vlastní komentář, formulář je na <a class="js-anchor" href="#comment-form">konci
                             sekce</a>.
                     </div>
-                    <div class="comments-section pb-5 mt-3">
+                    <div class="comments-section mt-3">
                         <div class="comment pb-3 pt-4" style="display:none">
                             <div class="row align-items-center">
                                 <div class="col-auto">
@@ -179,7 +179,9 @@ $GLOBALS['page_data'] = [
                                                                                            class="reply-to-comment js-anchor"></a>
                                             </li>
                                             <li class="list-inline-item date"></li>
-                                            <li class="list-inline-item"><a href="#">Odpovědět</a></li>
+                                            <li class="list-inline-item">
+                                                <a href="#" class="comments-section-reply-btn">Odpovědět</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -187,15 +189,31 @@ $GLOBALS['page_data'] = [
                             <div class="mt-3 content pb-3"></div>
                         </div>
                     </div>
+                    <div class="show-more pb-5 text-center">
+                        <button class="btn btn-outline-primary" style="display:none" type="submit">Zobrazit více
+                        </button>
+                    </div>
                     <form id="comment-form" class="needs-validation" novalidate>
                         <div class="fw-bold mb-3 fs-3">Podělte se o postřeh...</div>
+                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                            <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                            </symbol>
+                        </svg>
+                        <div id="reply-alert">
+                            <div class="alert alert-primary alert-dismissible fade show" role="alert" style="display: none">
+                                Tento komentář se zašle jako <strong>odpověď</strong> na <a href="#" class="reply-to js-anchor"></a>. <em>(kliknutím na křížek deaktivujete)</em>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="reply-to" name="reply" value="-1">
                         <div class="form-row">
                             <div class="form-floating col mb-3">
                                 <input type="text" class="form-control " id="comment_form-name" placeholder="Jméno"
-                                       max="40" name="name" required aria-describedby="help_block-name">
+                                       minlength="3" max="40" name="name" required aria-describedby="help_block-name">
                                 <label for="comment_form-name">Jméno</label>
                                 <div class="invalid-feedback">
-                                    Jméno je povinné.
+                                    Jméno (délší tří znaků) je povinné.
                                 </div>
                                 <div id="help_block-name" class="form-text">
                                     Ideálně unikátní přezdívka, pod kterou budete vystupovat.
@@ -223,6 +241,13 @@ $GLOBALS['page_data'] = [
                                 <div class="invalid-feedback">
                                     Vaše zpráva nemůže být prázdná.
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="g-recaptcha" data-sitekey="<?= $config->recaptcha->site ?>"
+                                 data-callback="grecaptchaValidated"></div>
+                            <div class="invalid-feedback">
+                                Proveďte ověření.
                             </div>
                         </div>
                         <button class="btn btn-primary" type="submit">Odeslat</button>
