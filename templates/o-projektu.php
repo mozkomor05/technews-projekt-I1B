@@ -30,43 +30,43 @@ $GLOBALS['page_data'] = [
         <div class="fw-bold fs-4 mt-4">Frontend</div>
         <div class="used-technologies row gx-5 justify-content-center">
             <div class="col-sm-3 col-6">
-                <img src="https://cdn.iconscout.com/icon/free/png-256/javascript-2038874-1720087.png" alt="JavaScript">
+                <img src="/assets/img/graphics/javascript.png" alt="JavaScript">
                 <div class="title">JavaScript</div>
             </div>
             <div class="col-sm-3 col-6">
-                <img src="https://avatars.githubusercontent.com/u/70142?s=200&v=4" alt="jQuery">
+                <img src="/assets/img/graphics/jquery.png" alt="jQuery">
                 <div class="title">jQuery 3</div>
             </div>
             <div class="col-sm-3 col-6">
                 <img class="p-4"
-                     src=" https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png"
+                     src="/assets/img/graphics/css.png"
                      alt="CSS">
                 <div class="title">CSS3</div>
             </div>
             <div class="col-sm-3 col-6">
-                <img src="https://www.itnetwork.cz/images/5/css/bootstrap/bootstrap-stack.png" alt="Boostrap">
-                <div class="title">Boostrap 5</div>
+                <img src="/assets/img/graphics/bootstrap.png" alt="Bootstrap">
+                <div class="title">Bootstrap 5</div>
             </div>
         </div>
         <div class="mt-5">Dále <span class="fw-bold">Fancybox 3</span> a <span class="fw-bold">LightSlider</span>.</div>
         <div class="fw-bold fs-4 mt-5">Backend</div>
         <div class="used-technologies row gx-5 justify-content-center">
             <div class="col-sm-3 col-6">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/PHP-logo.svg/1200px-PHP-logo.svg.png"
+                <img src="/assets/img/graphics/php.png"
                      alt="PHP 7.4">
                 <div class="title">PHP 7.4</div>
             </div>
             <div class="col-sm-3 col-6">
-                <img src="https://1000logos.net/wp-content/uploads/2020/08/MySQL-Logo.png" alt="MySQL">
+                <img src="/assets/img/graphics/mysql.png" alt="MySQL">
                 <div class="title">MySQL</div>
             </div>
             <div class="col-sm-3 col-6">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/768px-Python-logo-notext.svg.png"
-                     alt="Python">
+                <img src="/assets/img/graphics/python.png"
+                     alt="Python" class="py-3">
                 <div class="title">Python</div>
             </div>
             <div class="col-sm-3 col-6">
-                <img src="https://www.zonercloud.cz/media/zonercloud/cs/seznameni-a-konfigurace-apache-logo.png"
+                <img src="/assets/img/graphics/apache.png"
                      alt="Apache">
                 <div class="title">Apache</div>
             </div>
