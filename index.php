@@ -79,11 +79,10 @@ else
             <div class="col-12 col-md-6 pe-4">
                 <div class="h3">O stránce</div>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse sagittis ultrices augue. Cum
-                    sociis
-                    natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce dui leo, imperdiet
-                    in, aliquam
-                    sit amet, feugiat eu, orci. Fusce wisi.
+                    Strojové učení, fyzika, matematika, IT průmysl... Pokrok v těchto oblastech stoupá exponenciálně a sledovat jej můžete zde.
+                </p>
+                <p>
+                    Tato stránka vznikla v rámci závěrečného projektu předmětu Základy webových aplikací.
                 </p>
             </div>
             <div class="col-6 col-md-3 links">

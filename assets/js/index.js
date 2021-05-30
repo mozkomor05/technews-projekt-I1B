@@ -222,7 +222,6 @@ $(document).ready(function () {
 
             if (!comments.length) {
                 $commentsSection.text("Zatím tu nejsou žádné komentáře. Buďte první, kdo se podělí o svůj názor!");
-                return false;
             } else {
                 $showMore.on('click', function () {
                     loadMore(10);

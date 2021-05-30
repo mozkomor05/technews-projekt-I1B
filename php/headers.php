@@ -90,13 +90,13 @@ function get_header($page_data)
                     <li class="nav-item">
                         <a class="nav-link <?= $active[2] ?>" href="/O-Projektu">O projektu</a>
                     </li>
-                    <li class="nav-item dropdown <?= $active[3] ?>">
-                        <a class="nav-link dropdown-toggle" href="#" id="contact-dropdown" role="button"
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle <?= $active[3] ?>" href="#" id="contact-dropdown" role="button"
                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Kontakt
                         </a>
                         <div class="dropdown-menu" aria-labelledby="contact-dropdown">
-                            <a class="dropdown-item <?= $active[3] === "active" ? "active" : "" ?>" href="/Osobni-kontakt">Osobní
+                            <a class="dropdown-item <?= $active[3] ?>" href="/Osobni-kontakt">Osobní
                                 kontakt</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="https://www.spseiostrava.cz/">SPŠEI Ostrava</a>

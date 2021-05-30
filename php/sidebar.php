@@ -5,7 +5,7 @@ function get_the_sidebar()
     global $db;
 
     ?>
-    <div class="sidebar col-lg-4 mt-lg-5">
+    <div class="sidebar col-lg-4 mt-5 mt-lg-0">
         <div class="tags-list">
             <div class="h5">Populární štítky</div>
             <?php
