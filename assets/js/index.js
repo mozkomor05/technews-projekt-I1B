@@ -9,10 +9,10 @@ $(document).ready(function () {
 
     const headerOuterHeight = $('header nav.navbar').outerHeight(true);
 
-    function scrollToElement(element) {
+    function scrollToElement(element, speed = 1000) {
         $([document.documentElement, document.body]).animate({
             scrollTop: element.offset().top - headerOuterHeight
-        }, 1000);
+        }, speed);
     }
 
     $('body').on('click', 'a.js-anchor', function (event) {
@@ -77,7 +77,7 @@ $(document).ready(function () {
         });
     })
 
-    $('form').each(function () {
+    $('form.needs-validation').each(function () {
         this.addEventListener('click', function (event) {
             const $this = $(this);
             const $recaptcha = $this.find('.g-recaptcha');
@@ -108,12 +108,15 @@ $(document).ready(function () {
 
         const $commentTemplateEl = $commentsSection.children('.comment');
         const $commentTemplate = $commentTemplateEl.clone();
-        const $alertContainer = $commentsWrapper.find('#reply-alert');
-        const $alertTemplateEl = $alertContainer.children('.alert');
-        const $alertTemplate = $alertTemplateEl.clone();
+        const $alertContainer = $commentsWrapper.find('#alert-container');
+        const $replyAlertEl = $alertContainer.children('.reply-alert');
+        const $replyAlertTemplate = $replyAlertEl.clone();
+        const $errorAlertEl = $alertContainer.children('.error-alert');
+        const $errorAlertTemplate = $errorAlertEl.clone();
 
         $commentTemplateEl.remove();
-        $alertTemplateEl.remove();
+        $replyAlertEl.remove();
+        $errorAlertEl.remove();
 
         $.post('/php/ajax.php', {
             action: 'list_comments',
@@ -232,13 +235,13 @@ $(document).ready(function () {
                 const $commentEl = $(this).closest('.comment');
                 const $commentId = $commentEl.attr('data-id');
 
-                const $alert = $alertTemplate.clone();
+                const $alert = $replyAlertTemplate.clone();
                 const $alertLink = $alert.find('.reply-to');
 
                 $replyToInput.val($commentId);
 
                 $alertLink.text($commentEl.find('.name').text());
-                $alertLink.attr('href', '.comment-' + $commentId);
+                $alertLink.attr('href', '#comment-' + $commentId);
                 $alert.appendTo($alertContainer);
                 $alert.fadeIn();
 
@@ -282,15 +285,72 @@ $(document).ready(function () {
                     $commentForm.trigger("reset");
                     $commentForm.removeClass('was-validated');
 
-                    const $alert = $alertContainer.find('.alert');
-                    $alert.fadeOut();
-                    $alert.remove();
+                    $alertContainer.empty();
 
                     scrollToElement($("#comment-" + resComment['comment_id']));
-                }).catch(err => {
-                    console.log(err);
+                }).fail(req => {
+                    grecaptcha.reset();
+                    let message = "Nepodařilo se odeslat komentář."
+
+                    switch (req.responseText) {
+                        case 'validation_failure':
+                            message = "Nepodařilo se ověřit správnost některých polí. Ujištěte se, že jsou dostatečně dlouhá.";
+                            break;
+
+                        case 'email_validation_failure':
+                            message = 'Tento e-mail neexistuje. Prosím zkontrolujte jej.';
+                            break;
+                    }
+
+                    $alertContainer.find('.error-alert').remove();
+
+                    const $alert = $errorAlertTemplate.clone();
+
+                    $alert.find('.content').text(message);
+                    $alert.prependTo($alertContainer);
+                    $alert.fadeIn();
                 });
             });
+        });
+    }
+
+    const $tagsCarousel = $('#tags-carousel');
+
+    if ($tagsCarousel.length) {
+        const slider = $tagsCarousel.children('.carousel-inner').lightSlider({
+            controls: false,
+            loop: true,
+            auto: true,
+            slideMargin: 5,
+            items: 3,
+            pause: 6000,
+            pager: false
+        });
+
+        $tagsCarousel.find('.carousel-control-next').on('click', function () {
+            slider.goToNextSlide();
+        });
+
+        $tagsCarousel.find('.carousel-control-prev').on('click', function () {
+            slider.goToPrevSlide();
+        });
+    }
+
+    const $articleSearchForm = $('#article-search-form');
+
+    if ($articleSearchForm.length) {
+        const searchParams = new URLSearchParams(window.location.search)
+        if (searchParams.has('s') && searchParams.get('s') && searchParams.get('s').trim())
+            scrollToElement($('#clanky'), 300);
+        else
+            window.history.replaceState(null, null, window.location.pathname);
+
+        $articleSearchForm.submit(function (ev) {
+            ev.preventDefault();
+
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + $articleSearchForm.serialize();
+            window.history.replaceState(null, null, url);
+            document.location.reload(true);
         });
     }
 });

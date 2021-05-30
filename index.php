@@ -5,6 +5,7 @@ function throw_err_404()
 {
     http_response_code(404);
     include 'templates/404.php';
+    return false;
 }
 
 $part = strtolower($_GET['template'] ?? 'index');
@@ -45,6 +46,13 @@ $page_content = ob_get_clean();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <?php
+    foreach ($page_data['styles'] ?? [] as $style):
+        ?>
+        <link rel="stylesheet" href="<?= $style ?>">
+    <?php
+    endforeach;
+    ?>
     <link href="/assets/css/index.css?=<?php echo filemtime('./assets/css/index.css') ?>" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -105,6 +113,13 @@ else
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
 <script src="/assets/js/parallax.min.js"></script>
+<?php
+foreach ($page_data['scripts'] ?? [] as $script):
+    ?>
+    <script src="<?= $script ?>"></script>
+<?php
+endforeach;
+?>
 <script src="/assets/js/index.js?v=<?= filemtime("./assets/js/index.js") ?>"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>

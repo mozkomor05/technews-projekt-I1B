@@ -36,9 +36,9 @@ function get_main_header()
                         </div>
                     </li>
                 </ul>
-                <form class="d-flex">
+                <form class="d-flex" action="/Vypis-clanku">
                     <input class="form-control me-2" type="search" placeholder="Hledat mezi články..."
-                           aria-label="Search">
+                           aria-label="Hledat" name="s">
                     <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
                 </form>
             </div>
@@ -80,21 +80,21 @@ function get_header($page_data)
 
             <div class="collapse navbar-collapse" id="navbar-content">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item <?= $active[0] ?>">
-                        <a class="nav-link" href="/">Domů</a>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $active[0] ?>" href="/">Domů</a>
                     </li>
-                    <li class="nav-item <?= $active[1] ?>">
-                        <a class="nav-link" href="/Vypis-clanku">Výpis článků</a>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $active[1] ?>" href="/Vypis-clanku">Výpis článků</a>
                     </li>
-                    <li class="nav-item <?= $active[2] ?>">
-                        <a class="nav-link" href="/O-Projektu">O projektu</a>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $active[2] ?>" href="/O-Projektu">O projektu</a>
                     </li>
                     <li class="nav-item dropdown <?= $active[3] ?>">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="contact-dropdown" role="button"
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Kontakt
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="contact-dropdown">
                             <a class="dropdown-item <?= $active[3] === "active" ? "active" : "" ?>" href="#">Osobní
                                 kontakt</a>
                             <div class="dropdown-divider"></div>
@@ -102,9 +102,9 @@ function get_header($page_data)
                         </div>
                     </li>
                 </ul>
-                <form class="d-flex">
+                <form class="d-flex" action="/Vypis-clanku">
                     <input class="form-control me-2" type="search" placeholder="Hledat mezi články..."
-                           aria-label="Hledat">
+                           aria-label="Hledat" name="s">
                     <button class="btn btn-outline-primary my-2 my-sm-0 search-btn" type="submit">Hledat</button>
                 </form>
             </div>

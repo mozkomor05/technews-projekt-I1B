@@ -36,6 +36,7 @@ foreach ($karma_sql as $row)
 $karma_sum = $karma['positive'] - $karma['negative'];
 
 $pure_url = strtok((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", '?');
+$post_image = get_image_size($post['image'], 'largest');
 
 $GLOBALS['page_data'] = [
     'title' => $post['title'] . ' - TechNews',
@@ -47,8 +48,8 @@ $GLOBALS['page_data'] = [
         'type' => 'article',
         'url' => $pure_url,
         'title' => $post['title'],
-        'description' => get_excerpt($post['content'], 60),
-        'image' => $pure_url . $post['image']
+        'description' => get_excerpt($post['content'], 300),
+        'image' => $pure_url . $post_image
     ]
 ];
 ?>
@@ -112,7 +113,7 @@ $GLOBALS['page_data'] = [
         </div>
     </div>
 
-    <div data-parallax="scroll" data-image-src="<?= $post['image'] ?>"
+    <div data-parallax="scroll" data-image-src="<?= $post_image ?>"
          id="parallax-image"></div>
 
     <div id="article-content" class="container pt-5 pb-4" data-id="<?= $post['id'] ?>">
@@ -195,15 +196,19 @@ $GLOBALS['page_data'] = [
                     </div>
                     <form id="comment-form" class="needs-validation" novalidate>
                         <div class="fw-bold mb-3 fs-3">Podělte se o postřeh...</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-                            <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                            </symbol>
-                        </svg>
-                        <div id="reply-alert">
-                            <div class="alert alert-primary alert-dismissible fade show" role="alert" style="display: none">
-                                Tento komentář se zašle jako <strong>odpověď</strong> na <a href="#" class="reply-to js-anchor"></a>. <em>(kliknutím na křížek deaktivujete)</em>
+                        <div id="alert-container">
+                            <div class="error-alert alert alert-warning alert-dismissible fade show" role="alert"
+                                 style="display: none">
+                                <div class="content"></div>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <div class="reply-alert alert alert-primary alert-dismissible fade show" role="alert"
+                                 style="display: none">
+                                Tento komentář se zašle jako <strong>odpověď</strong> na <a href="#"
+                                                                                            class="reply-to js-anchor"></a>.
+                                <em>(kliknutím na křížek deaktivujete)</em>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                             </div>
                         </div>
                         <input type="hidden" id="reply-to" name="reply" value="-1">
