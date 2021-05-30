@@ -40,7 +40,7 @@ $search_term = trim($_GET['s'] ?? '');
                 <div class="carousel-item">
                     <a href="/Stitek/<?= ucfirst($tag['slug']) ?>">
                         <div class="img-wrapper">
-                            <img src="<?= $tag['image'] ?>" class="h-100 w-100" alt="<?= $tag['name'] ?>">
+                            <img src="<?= get_image_size($tag['image'], 'w400') ?>" class="h-100 w-100" alt="<?= $tag['name'] ?>">
                         </div>
                         <div class="carousel-caption p-1 pb-0">
                             <h5 class="text-white"><?= $tag['name'] ?> (<?= $tag['count'] ?>)</h5>

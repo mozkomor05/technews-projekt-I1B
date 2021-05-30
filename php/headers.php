@@ -25,12 +25,13 @@ function get_main_header()
                         <a class="nav-link" href="/O-Projektu">O projektu</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="contact-dropdown" role="button"
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Kontakt
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Osobní kontakt</a>
+                        <div class="dropdown-menu" aria-labelledby="contact-dropdown">
+                            <a class="dropdown-item" href="/Osobni-kontakt">Osobní
+                                kontakt</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="https://www.spseiostrava.cz/">SPŠEI Ostrava</a>
                         </div>
@@ -95,7 +96,7 @@ function get_header($page_data)
                             Kontakt
                         </a>
                         <div class="dropdown-menu" aria-labelledby="contact-dropdown">
-                            <a class="dropdown-item <?= $active[3] === "active" ? "active" : "" ?>" href="#">Osobní
+                            <a class="dropdown-item <?= $active[3] === "active" ? "active" : "" ?>" href="/Osobni-kontakt">Osobní
                                 kontakt</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="https://www.spseiostrava.cz/">SPŠEI Ostrava</a>

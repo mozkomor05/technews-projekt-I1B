@@ -35,7 +35,6 @@ foreach ($karma_sql as $row)
 
 $karma_sum = $karma['positive'] - $karma['negative'];
 
-$pure_url = strtok((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", '?');
 $post_image = get_image_size($post['image'], 'largest');
 
 $GLOBALS['page_data'] = [
@@ -46,10 +45,10 @@ $GLOBALS['page_data'] = [
     'no_container' => true,
     'og_meta' => [
         'type' => 'article',
-        'url' => $pure_url,
+        'url' => get_current_url(),
         'title' => $post['title'],
         'description' => get_excerpt($post['content'], 300),
-        'image' => $pure_url . $post_image
+        'image' => get_site_url() . $post_image
     ]
 ];
 ?>

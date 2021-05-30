@@ -353,4 +353,25 @@ $(document).ready(function () {
             document.location.reload(true);
         });
     }
+
+    const $photoGalleries = $('.photo-gallery');
+
+    if ($photoGalleries.length) {
+        $('<link>')
+            .appendTo('head')
+            .attr({
+                rel: 'stylesheet',
+                href: 'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css'
+            });
+
+        $.getScript("https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js", function (data, textStatus, jqxhr) {
+            const $links = $photoGalleries.find('a');
+
+            $links.attr("data-caption", function () {
+                return $(this).find("img").attr("alt");
+            });
+            $links.attr("data-fancybox", "gallery")
+            $links.fancybox();
+        });
+    }
 });

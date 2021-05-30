@@ -118,7 +118,7 @@ function get_image_size ($image, $size) {
     if ($size === 'largest') {
         $org = get_image_size($image, 'ORG');
 
-        if (file_exists(__DIR__ . '../' . $org))
+        if (file_exists(__DIR__ . '/../' . $org))
             return $org;
         else
             return get_image_size($image, 'w1920');
@@ -129,4 +129,13 @@ function get_image_size ($image, $size) {
     $filename = implode('.', $parts);
 
     return $filename . '-' . $size . '.' . $extension;
+}
+
+function get_current_url() {
+    return strtok(get_site_url() ."$_SERVER[REQUEST_URI]", '?');
+}
+
+function get_site_url(): string
+{
+    return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 }

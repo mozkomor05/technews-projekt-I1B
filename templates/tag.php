@@ -10,12 +10,20 @@ if (!empty($slug))
 if (empty($tag))
     return throw_err_404();
 
+$tag_image = get_image_size($tag['image'], 'largest');
+
 $GLOBALS['page_data'] = [
     'title' => $tag['name'] . ', štítek - TechNews',
     'header' => [
         'active_index' => 1,
-        'image' => $tag['image'],
+        'image' => $tag_image,
         'title' => 'Štítek - ' . $tag['name']
+    ],
+    'og_meta' => [
+        'type' => 'website',
+        'url' => get_current_url(),
+        'description' => get_excerpt($tag['description'], 300),
+        'image' => get_site_url() . $tag_image
     ]
 ];
 
