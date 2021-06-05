@@ -1,6 +1,8 @@
 <?php
 require_once(__DIR__ . '/php/app_load.php');
 
+global $config;
+
 function throw_err_404()
 {
     http_response_code(404);
@@ -25,12 +27,16 @@ else
 $page_data = $GLOBALS['page_data'] ?? [];
 $page_content = ob_get_clean();
 
+$css_file = 'assets/css/index' . ($config->debug ? '' : '.min') . '.css';
+$css_path = '/' . $css_file . '?=' . filemtime('./' . $css_file);
+
 ?>
 <!DOCTYPE html>
 <html lang='cs'>
 <head>
     <meta charset='utf-8'>
     <meta name="author" content="David Moškoř">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
     foreach ($page_data['og_meta'] ?? [] as $property => $content):
         ?>
@@ -53,7 +59,7 @@ $page_content = ob_get_clean();
     <?php
     endforeach;
     ?>
-    <link href="/assets/css/index.css?=<?php echo filemtime('./assets/css/index.css') ?>" rel="stylesheet">
+    <link href="<?= $css_path ?>" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -79,7 +85,8 @@ else
             <div class="col-12 col-md-6 pe-4">
                 <div class="h3">O stránce</div>
                 <p>
-                    Strojové učení, fyzika, matematika, IT průmysl... Pokrok v těchto oblastech stoupá exponenciálně a sledovat jej můžete zde.
+                    Strojové učení, fyzika, matematika, IT průmysl... Pokrok v těchto oblastech stoupá exponenciálně a
+                    sledovat jej můžete zde.
                 </p>
                 <p>
                     Tato stránka vznikla v rámci závěrečného projektu předmětu Základy webových aplikací.

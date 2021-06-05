@@ -9,7 +9,7 @@ function get_main_header()
                 <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
                 TechNews
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -75,7 +75,7 @@ function get_header($page_data)
                 <img src="/assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="">
                 TechNews
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content">
                 <span class="navbar-toggler-icon"></span>
             </button>
 

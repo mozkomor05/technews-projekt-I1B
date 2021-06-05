@@ -12,7 +12,7 @@ $GLOBALS['page_data'] = [
     <h1>Osobní kontakt</h1>
     <div>Kontaktovat mě můžete pomocí kontakního formuláře níže.</div>
     <hr>
-    <form id="contact-form" class="needs-validation" novalidate>
+    <form id="contact-form" class="needs-validation mb-5" novalidate>
         <div class="fw-bold mb-3 fs-3">Kontaktní formulář</div>
         <div class="form-row">
             <div class="form-floating col mb-3">

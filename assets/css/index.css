@@ -56,7 +56,7 @@ header .main-header-overlay {
 }
 
 header .main-header-overlay .content {
-    width: 500px;
+    max-width: 500px;
 }
 
 header .main-header-overlay .h1, header.small-header .overlay .h1 {
