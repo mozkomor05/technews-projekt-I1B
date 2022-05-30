@@ -1,7 +1,7 @@
 {
   "name": "mozkomor05/technews-projekt-i1b",
   "description": "description",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license": "proprietary",
   "authors": [
     {
@@ -9,8 +9,15 @@
       "email": "d.moskor.st@spseiostrava.cz"
     }
   ],
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
+  },
   "require": {
     "ext-json": "*",
-    "sergeytsalkov/meekrodb": "^2.3"
+    "sergeytsalkov/meekrodb": "^2.3",
+    "ext-mbstring": "*",
+    "bigit/vokativ": "dev-master"
   }
 }

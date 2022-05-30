@@ -1,17 +1,18 @@
 <?php
-global $db;
+
+$db = App::getDb();
 
 $GLOBALS['page_data'] = [
-    'title' => 'Výpis článků - TechNews',
-    'header' => [
+    'title'   => 'Výpis článků - TechNews',
+    'header'  => [
         'active_index' => 1,
-        'image' => '/assets/img/graphics/header.jpg',
-        'title' => 'Výpis článků a štítků'
+        'image'        => '/assets/img/graphics/header.jpg',
+        'title'        => 'Výpis článků a štítků'
     ],
     'scripts' => [
         '/assets/js/lightslider.min.js'
     ],
-    'styles' => [
+    'styles'  => [
         '/assets/css/lightslider.min.css'
     ]
 ];
@@ -40,11 +41,12 @@ $search_term = trim($_GET['s'] ?? '');
                 <div class="carousel-item">
                     <a href="/Stitek/<?= ucfirst($tag['slug']) ?>">
                         <div class="img-wrapper">
-                            <img src="<?= get_image_size($tag['image'], 'w400') ?>" class="h-100 w-100" alt="<?= $tag['name'] ?>">
+                            <img src="<?= PostTools::getImageSize($tag['image'], 'w400') ?>" class="h-100 w-100"
+                                 alt="<?= $tag['name'] ?>">
                         </div>
                         <div class="carousel-caption p-1 pb-0">
                             <h5 class="text-white"><?= $tag['name'] ?> (<?= $tag['count'] ?>)</h5>
-                            <p class="small"><?= get_excerpt($tag['description'], 50) ?></p>
+                            <p class="small"><?= PostTools::getExcerpt($tag['description'], 50) ?></p>
                         </div>
                     </a>
                 </div>
@@ -81,32 +83,30 @@ $search_term = trim($_GET['s'] ?? '');
         <?php
         $whereClause = "";
 
-        if (!empty($search_term))
+        if ( ! empty($search_term)) {
             $whereClause = "WHERE MATCH (p.title, p.content) AGAINST (%s IN NATURAL LANGUAGE MODE)";
-
-        $sql = '
-            SELECT p.*, COUNT(c.comment_id) AS comments_count, k.karma AS karma
-            FROM posts AS p
-                     LEFT JOIN comments AS c ON p.id = c.post_id
-                     LEFT JOIN (SELECT obj_id, SUM(value) AS karma FROM karma WHERE type = "post" GROUP BY obj_id) AS k
-                               ON k.obj_id = p.id
-            ' . $whereClause . '
-            GROUP BY p.id
-        ';
-
-        if (!empty($search_term)) {
-            $search_term = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $search_term);
-            $search_term = preg_replace('/[+\-><\(\)~*\"@]+/', ' ', $search_term);
-            $posts = $db->query($sql, $search_term);
         }
-        else {
-            $sql .= 'ORDER BY p.date DESC';
+
+        $sql = 'SELECT p.*, COUNT(c.comment_id) AS comments_count, k.karma AS karma
+                FROM posts AS p
+                    LEFT JOIN comments AS c ON p.id = c.post_id
+                    LEFT JOIN (
+                        SELECT obj_id, SUM(value) AS karma FROM karma WHERE type = "post" GROUP BY obj_id
+                    ) AS k ON k.obj_id = p.id
+                ' . $whereClause . ' GROUP BY p.id';
+
+        if ( ! empty($search_term)) {
+            $search_term = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $search_term);
+            $search_term = preg_replace('/[+\-><()~*\"@]+/', ' ', $search_term);
+            $posts       = $db->query($sql, $search_term);
+        } else {
+            $sql   .= ' ORDER BY p.date DESC';
             $posts = $db->query($sql);
         }
 
-        if (count($posts))
-            posts_archive_loop($posts, 250);
-        else {
+        if (count($posts)) {
+            PostTools::printArchiveLoop($posts, 250);
+        } else {
             ?>
             <div class="text-center">
                 <strong>Nebylo nic nalezeno.</strong> Ujistěte se, že hledáte podle celých slov a nepoužíváte slova

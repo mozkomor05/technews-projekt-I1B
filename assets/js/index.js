@@ -7,19 +7,56 @@ function grecaptchaValidated() {
 $(document).ready(function () {
     $('[data-bs-toggle="tooltip"]').tooltip();
 
-    const headerOuterHeight = $('header nav.navbar').outerHeight(true);
+    window.headerOuterHeight = $('header nav.navbar').outerHeight(true);
 
-    function scrollToElement(element, speed = 1000) {
-        $([document.documentElement, document.body]).animate({
-            scrollTop: element.offset().top - headerOuterHeight
-        }, speed);
-    }
+    $('form.needs-validation').each(function () {
+        this.addEventListener('submit', function (event) {
+            const $this = $(this);
+            const $recaptcha = $this.find('.g-recaptcha');
+            const failedRecaptcha = $recaptcha.length && !grecaptcha.getResponse().length;
+
+            if (!this.checkValidity() || failedRecaptcha) {
+                if (failedRecaptcha) {
+                    $recaptcha.addClass("is-invalid");
+                    $recaptcha.removeClass("is-valid");
+                } else
+                    grecaptchaValidated.apply($recaptcha);
+
+                event.preventDefault()
+                event.stopPropagation()
+            }
+
+            $this.addClass('was-validated')
+        }, true);
+    });
 
     $('body').on('click', 'a.js-anchor', function (event) {
         event.preventDefault();
         scrollToElement($(this.hash));
     })
 
+    setupArticle();
+
+    setupTagCarousel();
+
+    setupArticleSearchForm();
+
+    setupPhotoGalleries();
+
+    setupRegistrationForm();
+
+    setupLoginForm();
+
+    setupLogout();
+});
+
+function scrollToElement(element, speed = 1000) {
+    $([document.documentElement, document.body]).animate({
+        scrollTop: element.offset().top - window.headerOuterHeight,
+    }, speed);
+}
+
+function setupArticle() {
     const $readingTime = $('.reading-time'),
         $articleWrapper = $('#article-content'),
         $articleContent = $articleWrapper.find('.content');
@@ -75,27 +112,6 @@ $(document).ready(function () {
                 $parent.addClass('voted');
             }
         });
-    })
-
-    $('form.needs-validation').each(function () {
-        this.addEventListener('click', function (event) {
-            const $this = $(this);
-            const $recaptcha = $this.find('.g-recaptcha');
-            const failedRecaptcha = $recaptcha.length && !grecaptcha.getResponse().length;
-
-            if (!this.checkValidity() || failedRecaptcha) {
-                if (failedRecaptcha) {
-                    $recaptcha.addClass("is-invalid");
-                    $recaptcha.removeClass("is-valid");
-                } else
-                    grecaptchaValidated.apply($recaptcha);
-
-                event.preventDefault()
-                event.stopPropagation()
-            }
-
-            $this.addClass('was-validated')
-        }, true);
     });
 
     const $commentsWrapper = $('#article-comments');
@@ -162,14 +178,13 @@ $(document).ready(function () {
             const comments = prepareCommentsArray(JSON.parse(res));
 
             const commentElFromTemplate = function (data) {
-                const src = 'https://www.gravatar.com/avatar/' + data['email_hash'] + '?d=wavatar&s=64';
                 const $comment = $commentTemplate.clone();
 
                 $comment.attr('data-id', data['comment_id']);
                 $comment.attr('id', 'comment-' + data['comment_id']);
-                $comment.find('.image').attr('src', src);
+                $comment.find('.image').attr('src', data['image_src']);
                 $comment.find('.date').text(data['created_formatted']);
-                $comment.find('.name').text(data['author_name']);
+                $comment.find('.name').html(data['author_name']);
                 $comment.find('.content').text(data['content']);
 
                 if (data['reply'] !== null) {
@@ -189,6 +204,11 @@ $(document).ready(function () {
                             $highlightComment.removeClass("highlight");
                         }, 2000);
                     });
+                }
+
+                if (data['is_user']) {
+                    $comment.find('.comments-section-edit-btn').show();
+                    $comment.find('.comments-section-delete-btn').show();
                 }
 
                 $comment.show();
@@ -312,7 +332,9 @@ $(document).ready(function () {
             });
         });
     }
+}
 
+function setupTagCarousel() {
     const $tagsCarousel = $('#tags-carousel');
 
     if ($tagsCarousel.length) {
@@ -334,7 +356,9 @@ $(document).ready(function () {
             slider.goToPrevSlide();
         });
     }
+}
 
+function setupArticleSearchForm() {
     const $articleSearchForm = $('#article-search-form');
 
     if ($articleSearchForm.length) {
@@ -352,7 +376,9 @@ $(document).ready(function () {
             document.location.reload(true);
         });
     }
+}
 
+function setupPhotoGalleries() {
     const $photoGalleries = $('.photo-gallery');
 
     if ($photoGalleries.length) {
@@ -373,4 +399,112 @@ $(document).ready(function () {
             $links.fancybox();
         });
     }
-});
+}
+
+function setupRegistrationForm() {
+    const $registrationForm = $('#registration-form');
+    const $alertContainer = $registrationForm.find('.alert-container');
+    const $errorAlertEl = $alertContainer.children('.error-alert');
+    const $errorAlertTemplate = $errorAlertEl.clone();
+
+    $errorAlertEl.remove();
+
+    $registrationForm.submit(function (ev) {
+        ev.preventDefault();
+
+        const ajaxData = $registrationForm.serializeArray();
+        ajaxData.push({
+            name: 'action',
+            value: 'register'
+        });
+
+        $.post("/php/ajax.php", $.param(ajaxData)).done(submitRes => {
+            window.location.reload();
+        }).fail(req => {
+            grecaptcha.reset();
+            let message = "Nepodařilo se registrovat."
+
+            switch (req.responseText) {
+                case 'validation_failure':
+                    message = "Nepodařilo se ověřit správnost některých polí. Ujištěte se, že jsou dostatečně dlouhá.";
+                    break;
+
+                case 'email_validation_failure':
+                    message = 'Tento e-mail neexistuje. Prosím zkontrolujte jej.';
+                    break;
+
+                case 'user_name_already_exists':
+                    message = 'Uživatel s tímto uživatelským jménem již existuje.';
+                    break;
+
+                case 'user_email_already_exists':
+                    message = 'Uživatel s tímto e-mailem již existuje.';
+                    break;
+            }
+
+            $alertContainer.find('.error-alert').remove();
+
+            const $alert = $errorAlertTemplate.clone();
+
+            $alert.find('.content').text(message);
+            $alert.prependTo($alertContainer);
+            $alert.fadeIn();
+        });
+    });
+}
+
+function setupLoginForm() {
+    const $loginForm = $('#login-form');
+    const $alertContainer = $loginForm.find('.alert-container');
+    const $errorAlertEl = $alertContainer.children('.error-alert');
+    const $errorAlertTemplate = $errorAlertEl.clone();
+
+    $errorAlertEl.remove();
+
+    $loginForm.submit(function (ev) {
+        ev.preventDefault();
+
+        const ajaxData = $loginForm.serializeArray();
+        ajaxData.push({
+            name: 'action',
+            value: 'login'
+        });
+
+        $.post("/php/ajax.php", $.param(ajaxData)).done(submitRes => {
+            window.location.reload();
+        }).fail(req => {
+            grecaptcha.reset();
+            let message = "Nepodařilo se přihlásit."
+
+            switch (req.responseText) {
+                case 'not_valid':
+                    message = "Neplatné přihlašovací údaje, ujistěte se, že jste je správně zadali.";
+                    break;
+
+                case 'validation_failure' :
+                    message = 'Ujistěte se, že jste vyplnili všechna pole.';
+                    break;
+            }
+
+            $alertContainer.find('.error-alert').remove();
+
+            const $alert = $errorAlertTemplate.clone();
+
+            $alert.find('.content').text(message);
+            $alert.prependTo($alertContainer);
+            $alert.fadeIn();
+        });
+    });
+}
+
+function setupLogout() {
+    $('.logout-link').on('click', function (ev) {
+        ev.preventDefault();
+
+        $.post("/php/ajax.php", {
+            action: 'logout',
+        }).done(submitRes => {
+            window.location.reload();
+        });
+    });
+}

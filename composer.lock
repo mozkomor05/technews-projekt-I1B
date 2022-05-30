@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a6f7f8f82c5f7469ba0fffaa778a576",
+    "content-hash": "5f1e396c102a3f4378451089e6a810cb",
     "packages": [
+        {
+            "name": "bigit/vokativ",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/bigit/vokativ.git",
+                "reference": "acba8b099ac3f40ea380b9921d6c11f2843df6a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/bigit%2Fvokativ/repository/archive.zip?sha=acba8b099ac3f40ea380b9921d6c11f2843df6a8",
+                "reference": "acba8b099ac3f40ea380b9921d6c11f2843df6a8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vokativ\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Petr Joachim",
+                    "email": "petr@joachim.cz"
+                }
+            ],
+            "description": "Knihovna pro skloňování českých jmen do 5. pádu pro účely generování oslovení.",
+            "support": {
+                "issues": "https://gitlab.com/bigit/vokativ/-/issues",
+                "source": "https://gitlab.com/bigit/vokativ/-/tree/master"
+            },
+            "time": "2016-07-11T12:04:26+00:00"
+        },
         {
             "name": "sergeytsalkov/meekrodb",
             "version": "v2.3.1",
@@ -57,13 +101,19 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "bigit/vokativ": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-mbstring": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "platform-overrides": {
+        "php": "7.4"
+    },
+    "plugin-api-version": "2.3.0"
 }

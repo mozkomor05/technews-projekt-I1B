@@ -1,10 +1,11 @@
 <?php
+
 $GLOBALS['page_data'] = [
-    'title' => 'Osobní kontakt - TechNews',
+    'title'  => 'Osobní kontakt - TechNews',
     'header' => [
         'active_index' => 3,
-        'image' => '/assets/img/graphics/header.jpg',
-        'title' => 'Osobní kontakt'
+        'image'        => '/assets/img/graphics/header.jpg',
+        'title'        => 'Osobní kontakt'
     ]
 ];
 ?>
@@ -45,7 +46,7 @@ $GLOBALS['page_data'] = [
             </div>
         </div>
         <div class="form-row mb-3">
-            <div class="g-recaptcha" data-sitekey="<?= $config->recaptcha->site ?>"
+            <div class="g-recaptcha" data-sitekey="<?= App::getConfig()->get(['recaptcha', 'site']) ?>"
                  data-callback="grecaptchaValidated"></div>
             <div class="invalid-feedback">
                 Proveďte ověření.
