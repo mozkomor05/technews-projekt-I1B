@@ -48,6 +48,8 @@ $(document).ready(function () {
     setupLoginForm();
 
     setupLogout();
+
+    setupAvatarUpload();
 });
 
 function scrollToElement(element, speed = 1000) {
@@ -505,6 +507,65 @@ function setupLogout() {
             action: 'logout',
         }).done(submitRes => {
             window.location.reload();
+        });
+    });
+}
+
+function setupAvatarUpload() {
+    const $avatarUploadForm = $('#avatar-upload-form');
+    const $alertContainer = $avatarUploadForm.find('.alert-container');
+    const $alertPrimary = $alertContainer.children('.alert-primary');
+    const $progress = $alertPrimary.find('.progress-percentage');
+    const $alertError = $alertContainer.children('.alert-danger');
+    const $submitButton = $avatarUploadForm.find('button[type="submit"]');
+
+    $avatarUploadForm.submit(function (ev) {
+        ev.preventDefault();
+
+        $submitButton.prop('disabled', true);
+        $alertError.hide();
+        $alertPrimary.show();
+
+        const formData = new FormData(this);
+        formData.append('action', 'upload_avatar');
+
+        $.ajax({
+            xhr: function () {
+                const xhr = new window.XMLHttpRequest();
+
+                xhr.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        let percentComplete = evt.loaded / evt.total;
+                        percentComplete = Math.round(percentComplete * 100);
+                        $progress.text(percentComplete);
+                    }
+                }, false);
+
+                return xhr;
+            },
+            url: '/php/ajax.php',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (result) {
+                const res = result.responseText;
+                let message = "Nepodařilo se nahrát obrázek.";
+
+                switch (res) {
+
+                }
+
+                $alertPrimary.hide();
+                $submitButton.prop('disabled', false);
+                $alertError.children('.content').text(message);
+                $alertError.show();
+            },
         });
     });
 }
