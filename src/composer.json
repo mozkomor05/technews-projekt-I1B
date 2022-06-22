@@ -18,6 +18,7 @@
     "ext-json": "*",
     "sergeytsalkov/meekrodb": "^2.3",
     "ext-mbstring": "*",
-    "bigit/vokativ": "dev-master"
+    "bigit/vokativ": "dev-master",
+    "ext-gd": "*"
   }
 }

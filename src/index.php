@@ -193,7 +193,7 @@ if ($page_data['main_page'] ?? false) {
                         <div class="form-floating col mb-3">
                             <input type="password" class="form-control" id="registration_form-password"
                                    placeholder="Heslo" minlength="6" max="70" name="password" required>
-                            <label for="registration_form-email">Heslo</label>
+                            <label for="registration_form-password">Heslo</label>
                             <div class="invalid-feedback">
                                 Prosím zadejte heslo o alespoň 6 znacích.
                             </div>
@@ -203,7 +203,7 @@ if ($page_data['main_page'] ?? false) {
                         <div class="form-floating col mb-3">
                             <input type="password" class="form-control" id="registration_form-password_confirm"
                                    placeholder="Potvrďte heslo" max="70" required name="passwordConfirm">
-                            <label for="registration_form-registration_form-password_confirm">Potvrďte heslo</label>
+                            <label for="registration_form-password_confirm">Potvrďte heslo</label>
                             <div class="invalid-feedback">
                                 Hesla se neshodují.
                             </div>

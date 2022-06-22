@@ -2,7 +2,7 @@
 
 function get_navbar($active_index = 0)
 {
-    $active = array_fill(0, 6, "");
+    $active                = array_fill(0, 6, "");
     $active[$active_index] = 'active';
     ?>
     <nav class="navbar navbar-expand-lg navbar-dark py-3 px-5">
@@ -52,35 +52,39 @@ function get_navbar($active_index = 0)
                 </li>
             </ul>
             <div class="navbar-nav ms-5">
-            <?php
-            if(LoginTools::isLoggedIn()):
-                $user = LoginTools::getUser();
-            ?>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle <?= $active[4] ?: $active[5] ?>" role="button" id="profile-dropdown"
-                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                       <img src=""/>
-                       <b><?=UserTools::getNiceName($user)?></b>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="profile-dropdown">
-                        <a class="dropdown-item <?= $active[4] ?>" href="/Profil"><i class="fas fa-user"></i>Můj profil</a>
-                        <a class="dropdown-item <?= $active[5] ?>" href="/Profil/nastaveni"><i class="fas fa-tools"></i>Nastavení</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item logout-link" href="#"><i class="fas fa-sign-out-alt"></i>Odhlásit se</a>
+                <?php
+                if (LoginTools::isLoggedIn()):
+                    $user = LoginTools::getUser();
+                    ?>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle <?= $active[4] ?: $active[5] ?>" role="button"
+                           id="profile-dropdown"
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src=""/>
+                            <b><?= UserTools::getNiceName($user) ?></b>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="profile-dropdown">
+                            <a class="dropdown-item <?= $active[4] ?>" href="/Profil"><i class="fas fa-user"></i>Můj
+                                profil</a>
+                            <a class="dropdown-item <?= $active[5] ?>" href="/Profil/nastaveni"><i
+                                        class="fas fa-tools"></i>Nastavení</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item logout-link" href="#"><i class="fas fa-sign-out-alt"></i>Odhlásit se</a>
+                        </div>
                     </div>
-                </div>
-            <?php
-            else:
-            ?>
-                <div class="nav-item fa-sm">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Přilášení</a>
-                </div>
-                <div class="nav-item ms-2">
-                    <a href="#" class="nav-link btn btn-sm" data-bs-toggle="modal" data-bs-target="#registrationModal">Registrace</a>
-                </div>
-            <?php
-            endif;
-             ?>
+                <?php
+                else:
+                    ?>
+                    <div class="nav-item fa-sm">
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Přilášení</a>
+                    </div>
+                    <div class="nav-item ms-2">
+                        <a href="#" class="nav-link btn btn-sm" data-bs-toggle="modal"
+                           data-bs-target="#registrationModal">Registrace</a>
+                    </div>
+                <?php
+                endif;
+                ?>
             </div>
         </div>
     </nav>
@@ -112,13 +116,13 @@ function get_header($page_data)
     $show_header = ($header_data['hide_header'] ?? false) !== true;
     $bg_image    = $header_data['image'] ?? '/assets/img/graphics/header.jpg';
     ?>
-    <header class="small-header <?= $show_header ? "" : "h-auto" ?>"
+    <header class="small-header <?= $show_header ? "" : "h-auto" ?>" <?php
+    if ($show_header): ?>
+            data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%">
         <?php
-        if ($show_header): ?>
-            data-parallax="scroll" data-image-src="<?= $bg_image ?>" data-position-y="-100%"
-        <?php
+        else:
+            echo ">";
         endif;
-        echo ">";
 
         get_navbar($header_data['active_index'] ?? -1);
         ?>

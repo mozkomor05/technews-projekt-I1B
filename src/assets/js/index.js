@@ -50,6 +50,8 @@ $(document).ready(function () {
     setupLogout();
 
     setupAvatarUpload();
+
+    setupProfileDetailsForm();
 });
 
 function scrollToElement(element, speed = 1000) {
@@ -187,7 +189,7 @@ function setupArticle() {
                 $comment.find('.image').attr('src', data['image_src']);
                 $comment.find('.date').text(data['created_formatted']);
                 $comment.find('.name').html(data['author_name']);
-                $comment.find('.content').text(data['content']);
+                $comment.find('.content').html(data['content']);
 
                 if (data['reply'] !== null) {
                     $comment.addClass('reply');
@@ -208,9 +210,9 @@ function setupArticle() {
                     });
                 }
 
-                if (data['is_user']) {
-                    $comment.find('.comments-section-edit-btn').show();
-                    $comment.find('.comments-section-delete-btn').show();
+                if (data['can_edit']) {
+                    $comment.find('.comments-section-edit-btn').parent().show();
+                    $comment.find('.comments-section-delete-btn').parent().show();
                 }
 
                 $comment.show();
@@ -252,7 +254,8 @@ function setupArticle() {
                 loadMore(5);
             }
 
-            $('body').on('click', '.comments-section-reply-btn', function () {
+            $('body').on('click', '.comments-section-reply-btn', function (ev) {
+                ev.preventDefault();
                 const $commentEl = $(this).closest('.comment');
                 const $commentId = $commentEl.attr('data-id');
 
@@ -271,6 +274,56 @@ function setupArticle() {
                 });
 
                 scrollToElement($commentForm);
+            });
+
+            const $editModal = $('#editModal');
+            const $deleteModal = $('#deleteModal');
+
+            $editModal.on('show.bs.modal', function (event) {
+                const $button = $(event.relatedTarget);
+                const $commentEl = $button.closest('.comment');
+                const $commentId = $commentEl.attr('data-id');
+
+                $(this).find('input[name="comment_id"]').val($commentId);
+                $(this).find('textarea').val($commentEl.find('.content').text());
+            });
+
+            $deleteModal.on('show.bs.modal', function (event) {
+                const $button = $(event.relatedTarget);
+                const $commentEl = $button.closest('.comment');
+                const $commentId = $commentEl.attr('data-id');
+
+                $(this).find('input[name="comment_id"]').val($commentId);
+            });
+
+            $('#editCommentForm').submit(function (ev) {
+                ev.preventDefault();
+
+                const ajaxData = $(this).serializeArray();
+                ajaxData.push({name: 'action', value: 'edit_comment'});
+
+                $.post('/php/ajax.php', ajaxData, "json").done(res => {
+                    const commentObj = JSON.parse(res);
+
+                    const $comment = $('.comment[data-id="' + commentObj['comment_id'] + '"]');
+                    $comment.find('.content').html(commentObj['content']);
+
+                    bootstrap.Modal.getInstance($editModal[0]).hide();
+                });
+            });
+
+            $('#deleteCommentForm').submit(function (ev) {
+                ev.preventDefault();
+
+                const ajaxData = $(this).serializeArray();
+                ajaxData.push({name: 'action', value: 'delete_comment'});
+
+                $.post('/php/ajax.php', ajaxData, "json").done(res => {
+                    const $comment = $('.comment[data-id="' + res + '"]');
+                    $comment.remove();
+
+                    bootstrap.Modal.getInstance($deleteModal[0]).hide();
+                });
             });
 
             $commentForm.submit(function (event) {
@@ -519,6 +572,23 @@ function setupAvatarUpload() {
     const $alertError = $alertContainer.children('.alert-danger');
     const $submitButton = $avatarUploadForm.find('button[type="submit"]');
 
+    const $avatarUploadInput = $('#avatar-upload');
+    const $avatarPreview = $('#avatar-upload-preview');
+
+    const originalSrc = $avatarPreview.attr('src');
+
+    $avatarUploadInput.on('change', function (ev) {
+        const file = ev.target.files[0];
+
+        if (file) {
+            $avatarPreview.attr('src', URL.createObjectURL(file));
+        }
+    });
+
+    $avatarUploadForm.on('reset', function () {
+        $avatarPreview.attr('src', originalSrc);
+    });
+
     $avatarUploadForm.submit(function (ev) {
         ev.preventDefault();
 
@@ -526,46 +596,167 @@ function setupAvatarUpload() {
         $alertError.hide();
         $alertPrimary.show();
 
-        const formData = new FormData(this);
-        formData.append('action', 'upload_avatar');
+        resizeImage({
+            file: $avatarUploadInput.prop('files')[0],
+            maxSize: 500
+        }).then(function (resizedAvatar) {
+            const formData = new FormData();
 
-        $.ajax({
-            xhr: function () {
-                const xhr = new window.XMLHttpRequest();
+            formData.append('avatar', resizedAvatar);
+            formData.append('action', 'upload_avatar');
 
-                xhr.upload.addEventListener("progress", function (evt) {
-                    if (evt.lengthComputable) {
-                        let percentComplete = evt.loaded / evt.total;
-                        percentComplete = Math.round(percentComplete * 100);
-                        $progress.text(percentComplete);
+            $.ajax({
+                xhr: function () {
+                    const xhr = new window.XMLHttpRequest();
+
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            let percentComplete = evt.loaded / evt.total;
+                            percentComplete = Math.round(percentComplete * 100);
+                            $progress.text(percentComplete);
+                        }
+                    }, false);
+
+                    return xhr;
+                },
+                url: '/php/ajax.php',
+                type: 'POST',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    window.location.reload();
+                },
+                error: function (result) {
+                    const res = result.responseText;
+                    let message = "Nepodařilo se nahrát obrázek.";
+
+                    switch (res) {
+                        case 'avatar_too_big':
+                            message = "Maximální velikost souboru je 1 MB";
+                            break;
+                        case 'avatar_not_jpeg_or_png':
+                            message = "Obrázek musí být JPEG nebo PNG.";
+                            break;
                     }
-                }, false);
 
-                return xhr;
-            },
-            url: '/php/ajax.php',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            dataType: "json",
-            success: function (result) {
-                window.location.reload();
-            },
-            error: function (result) {
-                const res = result.responseText;
-                let message = "Nepodařilo se nahrát obrázek.";
+                    $alertPrimary.hide();
+                    $submitButton.prop('disabled', false);
+                    $alertError.children('.content').text(message);
+                    $alertError.show();
+                },
+            });
+        });
+    });
 
-                switch (res) {
+    $('#remove-avatar-btn').on('click', function (ev) {
+        ev.preventDefault();
 
-                }
-
-                $alertPrimary.hide();
-                $submitButton.prop('disabled', false);
-                $alertError.children('.content').text(message);
-                $alertError.show();
-            },
+        $.post("/php/ajax.php", {
+            action: 'remove_avatar',
+        }).done(() => {
+            window.location.reload();
         });
     });
 }
+
+function setupProfileDetailsForm() {
+    $('.profile-details-form').each(function () {
+        const $profileDetailsForm = $(this);
+        const $alertContainer = $profileDetailsForm.find('.alert-container');
+        const $errorAlertEl = $alertContainer.children('.error-alert');
+        const $errorAlertTemplate = $errorAlertEl.clone();
+
+        $errorAlertEl.remove();
+
+        $profileDetailsForm.submit(function (ev) {
+            ev.preventDefault();
+
+            const data = $profileDetailsForm.serializeArray();
+            data.push({
+                name: 'action',
+                value: 'update_profile_details'
+            });
+
+            $.post("/php/ajax.php", $.param(data)).done(submitRes => {
+                window.location.reload();
+            }).fail(req => {
+                let message = "Nepodařilo se uložit změny.";
+
+                switch (req.responseText) {
+                    case 'email_validation_failure':
+                        message = "Email není validní.";
+                        break;
+                    case 'email_already_exists':
+                        message = "Email je již používán.";
+                        break;
+                    case 'invalid_password':
+                        message = "Nezadali jste správné heslo.";
+                        break;
+                }
+
+                $alertContainer.find('.error-alert').remove();
+
+                const $alert = $errorAlertTemplate.clone();
+
+                $alert.find('.content').text(message);
+                $alert.prependTo($alertContainer);
+                $alert.fadeIn();
+            });
+        });
+    });
+}
+
+// Resize image, https://stackoverflow.com/a/39235724/7766662
+function resizeImage(settings) {
+    var file = settings.file;
+    var maxSize = settings.maxSize;
+    var reader = new FileReader();
+    var image = new Image();
+    var canvas = document.createElement('canvas');
+    var dataURItoBlob = function (dataURI) {
+        var bytes = dataURI.split(',')[0].indexOf('base64') >= 0 ?
+            atob(dataURI.split(',')[1]) :
+            unescape(dataURI.split(',')[1]);
+        var mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var max = bytes.length;
+        var ia = new Uint8Array(max);
+        for (var i = 0; i < max; i++)
+            ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], {type: mime});
+    };
+    var resize = function () {
+        var width = image.width;
+        var height = image.height;
+        if (width > height) {
+            if (width > maxSize) {
+                height *= maxSize / width;
+                width = maxSize;
+            }
+        } else {
+            if (height > maxSize) {
+                width *= maxSize / height;
+                height = maxSize;
+            }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+        var dataUrl = canvas.toDataURL('image/jpeg');
+        return dataURItoBlob(dataUrl);
+    };
+    return new Promise(function (ok, no) {
+        if (!file.type.match(/image.*/)) {
+            no(new Error("Not an image"));
+            return;
+        }
+        reader.onload = function (readerEvent) {
+            image.onload = function () {
+                return ok(resize());
+            };
+            image.src = readerEvent.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+};

@@ -10,7 +10,7 @@ class UserTools
             $user = LoginTools::getUser();
         }
 
-        return htmlspecialchars(ucfirst($user->first_name) . " " . ucfirst($user->last_name));
+        return ucfirst($user->first_name) . " " . ucfirst($user->last_name);
     }
 
     public static function vokativ($user = null)
@@ -28,7 +28,13 @@ class UserTools
             $user = LoginTools::getUser();
         }
 
-        return $user->avatar ?: '/assets/img/graphics/avatar.png';
+        $path = __DIR__ . '/../' . $user->avatar;
+
+        if (empty($user->avatar) || ! file_exists($path)) {
+            return '/assets/img/graphics/avatar.png';
+        }
+
+        return $user->avatar . '?v=' . filemtime($path);
     }
 
     public static function fetchUser($userName): ?object

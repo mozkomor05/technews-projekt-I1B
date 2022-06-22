@@ -76,7 +76,7 @@ $search_term = trim($_GET['s'] ?? '');
     <form class="d-flex" id="article-search-form">
         <input class="form-control me-2" name="s" type="search" placeholder="Hledat mezi články..."
                aria-label="Hledat mezi články..." value="<?= $search_term ?>">
-        <button class="btn btn-outline-success" type="submit">Hledat</button>
+        <button class="btn btn-primary" type="submit">Hledat</button>
     </form>
     <hr>
     <div id="posts-archive">

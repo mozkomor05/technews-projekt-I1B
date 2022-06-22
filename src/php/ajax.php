@@ -25,9 +25,9 @@ function validate_captcha($captcha_response, $ip)
             'content' => http_build_query([
                 'secret'   => App::getConfig()->get(['recaptcha', 'secret']),
                 'response' => $captcha_response,
-                'remoteip' => $ip
-            ])
-        ]
+                'remoteip' => $ip,
+            ]),
+        ],
     ];
 
     $context               = stream_context_create($options);
@@ -74,7 +74,7 @@ function ajax_process_vote()
     if (in_array($post_id, $votes_cookie) || $voted_ip != 0) {
         die(
         json_encode([
-            'success' => false
+            'success' => false,
         ])
         );
     }
@@ -83,28 +83,33 @@ function ajax_process_vote()
         'obj_id' => $post_id,
         'type'   => $type,
         'value'  => $vote,
-        'ip'     => $ip
+        'ip'     => $ip,
     ]);
 
     $votes_cookie[] = $post_id;
     setcookie("votes", json_encode($votes_cookie), 2147483647, '/');
 
-    die(json_encode([
-        'success' => true
-    ]));
+    die(
+    json_encode([
+        'success' => true,
+    ])
+    );
 }
 
 function comment_for_FE($comment)
 {
+    $currentUser                  = LoginTools::getUser();
     $userName                     = $comment['author_user'] ?: false;
     $comment['created_formatted'] = PostTools::getNiceDate($comment['created']);
     $comment['is_user']           = (bool)$userName;
+    $comment['can_edit']          = $comment['is_user'] && ! empty($currentUser) && $userName === $currentUser->user_name;
 
     if ($userName) {
         $user                   = UserTools::fetchUser($userName);
         $comment['author_name'] = UserTools::getNiceName($user) . sprintf(
                 ' <small class="comment-username">(<a href="/Profily/%s">@<i>%s<i></a>)</small>',
-                $user->user_name, $user->user_name
+                $user->user_name,
+                $user->user_name
             );
         $comment['image_src']   = UserTools::getAvatar($user);
     } else {
@@ -148,7 +153,7 @@ function ajax_submit_comment()
     $required_vars = [
         'message' => FILTER_SANITIZE_SPECIAL_CHARS,
         'post_id' => FILTER_VALIDATE_INT,
-        'reply'   => FILTER_VALIDATE_INT
+        'reply'   => FILTER_VALIDATE_INT,
     ];
 
     if ( ! $loggedIn) {
@@ -203,6 +208,8 @@ function ajax_submit_comment()
         }
     }
 
+    $data['message'] = str_replace('&#10;', '<br />', $data['message']);
+
     $inserted = $db->insert('comments', [
         'post_id'      => $data['post_id'],
         'author_user'  => ! $loggedIn ? null : $user->user_name,
@@ -211,7 +218,7 @@ function ajax_submit_comment()
         'author_ip'    => $ip,
         'created'      => date("Y-m-d H:i:s"),
         'content'      => $data['message'],
-        'reply'        => $data['reply']
+        'reply'        => $data['reply'],
     ]);
 
     if ($inserted === false) {
@@ -225,9 +232,11 @@ function ajax_submit_comment()
         )
     );
 
-    die(json_encode([
-        'comment' => $comment
-    ]));
+    die(
+    json_encode([
+        'comment' => $comment,
+    ])
+    );
 }
 
 function ajax_register()
@@ -320,8 +329,11 @@ function ajax_login()
     $data['userName'] = trim($data['userName']);
 
     // fetch user password hash by username or email
-    $user = $db->queryFirstRow("SELECT * FROM users WHERE user_name = %s OR email = %s",
-        $data['userName'], $data['userName']);
+    $user = $db->queryFirstRow(
+        "SELECT * FROM users WHERE user_name = %s OR email = %s",
+        $data['userName'],
+        $data['userName']
+    );
 
     if ( ! $user) {
         bad_request('not_valid'); // don't inform the user that the username doesn't exist
@@ -345,4 +357,211 @@ function ajax_logout()
     LoginTools::logout();
 
     die(1);
+}
+
+function ajax_upload_avatar()
+{
+    $db = App::getDb();
+
+    if ( ! LoginTools::isLoggedIn()) {
+        bad_request('not_logged_in');
+    }
+
+    $user = LoginTools::getUser();
+
+    if ( ! isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== 0) {
+        if ($_FILES['avatar']['error'] === 2) {
+            bad_request('avatar_too_big');
+        }
+
+        bad_request('upload_error');
+    }
+
+    $avatar          = $_FILES['avatar'];
+    $avatar_size     = $avatar['size'];
+    $avatar_type     = $avatar['type'];
+    $avatar_tmp_name = $avatar['tmp_name'];
+
+    if ($avatar_size > 1048576) {
+        bad_request('avatar_too_big');
+    }
+
+    if ($avatar_type !== 'image/jpeg' && $avatar_type !== 'image/png') {
+        bad_request('avatar_not_jpeg_or_png');
+    }
+
+    $avatar_url  = '/assets/img/uploads/avatars/' . $user->user_name . '.jpg';
+    $avatar_path = __DIR__ . '/..' . $avatar_url;
+
+    if (file_exists($avatar_path)) {
+        unlink($avatar_path);
+    }
+
+    $image  = imagecreatefromstring(file_get_contents($avatar_tmp_name));
+    $width  = imagesx($image);
+    $height = imagesy($image);
+    $size   = min($width, $height);
+    $x      = ($width - $size) / 2;
+    $y      = ($height - $size) / 2;
+    $thumb  = imagecreatetruecolor($size, $size);
+    imagecopyresampled($thumb, $image, 0, 0, $x, $y, $size, $size, $size, $size);
+    imagejpeg($thumb, $avatar_path, 60);
+
+    $db->update('users', [
+        'avatar' => $avatar_url,
+    ], 'user_name=%s', $user->user_name);
+    die(1);
+}
+
+function ajax_remove_avatar()
+{
+    $db = App::getDb();
+
+    if ( ! LoginTools::isLoggedIn()) {
+        bad_request('not_logged_in');
+    }
+
+    $user = LoginTools::getUser();
+
+    $db->update('users', [
+        'avatar' => null,
+    ], 'user_name=%s', $user->user_name);
+
+    die(1);
+}
+
+function ajax_update_profile_details()
+{
+    $db = App::getDb();
+
+    if ( ! LoginTools::isLoggedIn()) {
+        bad_request('not_logged_in');
+    }
+
+    $user          = LoginTools::getUser();
+    $required_vars = [
+        'firstName'       => FILTER_SANITIZE_SPECIAL_CHARS,
+        'lastName'        => FILTER_SANITIZE_SPECIAL_CHARS,
+        'email'           => FILTER_VALIDATE_EMAIL,
+        'password'        => FILTER_UNSAFE_RAW,
+        'currentPassword' => FILTER_UNSAFE_RAW,
+    ];
+
+    $updateData = [];
+    $data       = filter_input_array(INPUT_POST, $required_vars);
+
+    if ($data['email'] === false) {
+        bad_request('email_validation_failure');
+    }
+
+    if ($data['email'] !== null) {
+        if ( ! checkdnsrr(explode('@', $data['email'])[1] . '.', 'MX')) {
+            bad_request('email_validation_failure');
+        }
+
+        $user_email_exists = $db->queryFirstField("SELECT COUNT(1) FROM users WHERE email = %s", $data['email']);
+
+        if ($user_email_exists) {
+            bad_request("email_already_exists");
+        }
+    }
+
+    if ($data['firstName']) {
+        $updateData['first_name'] = ucfirst($data['firstName']);
+    }
+
+    if ($data['lastName']) {
+        $updateData['last_name'] = ucfirst($data['lastName']);
+    }
+
+    if ($data['email']) {
+        $updateData['email'] = $data['email'];
+    }
+
+    if ($data['password']) {
+        if ( ! password_verify($data['currentPassword'], $user->password)) {
+            bad_request('invalid_password');
+        }
+
+        $updateData['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+    }
+
+    if (count($updateData) > 0) {
+        $db->update('users', $updateData, 'user_name=%s', $user->user_name);
+    }
+    die(1);
+}
+
+function ajax_edit_comment()
+{
+    $db = App::getDb();
+
+    if ( ! LoginTools::isLoggedIn()) {
+        bad_request('not_logged_in');
+    }
+
+    $user          = LoginTools::getUser();
+    $required_vars = [
+        'comment_id' => FILTER_VALIDATE_INT,
+        'message'    => FILTER_SANITIZE_SPECIAL_CHARS,
+    ];
+
+    $data = filter_input_array(INPUT_POST, $required_vars);
+
+    foreach ($data as $field) {
+        if ($field === false || $field === null) {
+            bad_request("validation_failure");
+        }
+    }
+
+    $commentUser = $db->queryFirstField("SELECT author_user FROM comments WHERE comment_id = %d", $data['comment_id']);
+
+    if ($commentUser !== $user->user_name) {
+        bad_request('not_authorised');
+    }
+
+    $data['message'] = trim($data['message']);
+
+    $db->update('comments', [
+        'content' => $data['message'],
+    ], 'comment_id=%s', $data['comment_id']);
+
+    $updatedComment = $db->queryFirstRow(
+        "SELECT comment_id, reply, author_name, content, created, author_email, author_user FROM comments WHERE comment_id = %d",
+        $data['comment_id']
+    );
+
+    die(json_encode(comment_for_FE($updatedComment)));
+}
+
+function ajax_delete_comment()
+{
+    $db = App::getDb();
+
+    if ( ! LoginTools::isLoggedIn()) {
+        bad_request('not_logged_in');
+    }
+
+    $user          = LoginTools::getUser();
+    $required_vars = [
+        'comment_id' => FILTER_VALIDATE_INT,
+    ];
+
+    $data = filter_input_array(INPUT_POST, $required_vars);
+    foreach ($data as $field) {
+        if ($field === false || $field === null) {
+            bad_request("validation_failure");
+        }
+    }
+
+    $commentUser = $db->queryFirstField("SELECT author_user FROM comments WHERE comment_id = %d", $data['comment_id']);
+
+    if ($commentUser !== $user->user_name) {
+        bad_request('not_authorised');
+    }
+
+    $db->delete('comments', 'comment_id=%s', $data['comment_id']);
+
+    echo($data['comment_id']);
+    die();
 }

@@ -64,13 +64,13 @@ header nav.navbar .nav-link:hover {
     text-decoration: none;
 }
 
-.btn {
+.btn-primary {
     color: #240339;
     border-color: #240339;
     background-color: transparent;
 }
 
-.btn:hover {
+.btn-primary:hover {
     color: white;
     border-color: #240339;
     background: #240339;

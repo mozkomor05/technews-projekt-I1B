@@ -31,7 +31,7 @@ $karma_sql      = $db->queryFullColumns(
 
 $karma = [
     'positive' => 0,
-    'negative' => 0
+    'negative' => 0,
 ];
 
 foreach ($karma_sql as $row) {
@@ -53,8 +53,8 @@ $GLOBALS['page_data'] = [
         'url'         => PostTools::getCurrentUrl(),
         'title'       => $post['title'],
         'description' => PostTools::getExcerpt($post['content'], 300),
-        'image'       => PostTools::getSiteUrl() . $post_image
-    ]
+        'image'       => PostTools::getSiteUrl() . $post_image,
+    ],
 ];
 ?>
 
@@ -68,7 +68,9 @@ $GLOBALS['page_data'] = [
                         <i class="far fa-calendar-alt"></i> <?= PostTools::getNiceDate($post['date']) ?>
                     </div>
                     <div>
-                        <i class="far fa-comment"></i> <?= $comments_count ?> <?= PostTools::getCommentNoun($comments_count) ?>
+                        <i class="far fa-comment"></i> <?= $comments_count ?> <?= PostTools::getCommentNoun(
+                            $comments_count
+                        ) ?>
                     </div>
                     <div>
                         <i class="far fa-thumbs-up"></i>
@@ -200,13 +202,15 @@ $GLOBALS['page_data'] = [
                                             <li class="list-inline-item">
                                                 <a href="#" class="comments-section-reply-btn">Odpovědět</a>
                                             </li>
-                                            <li class="list-inline-item">
+                                            <li class="list-inline-item" style="display:none">
                                                 <a href="#" class="comments-section-edit-btn text-secondary hide"
-                                                   style="display:none">Editovat</a>
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#editModal">Editovat</a>
                                             </li>
-                                            <li class="list-inline-item">
+                                            <li class="list-inline-item" style="display:none">
                                                 <a href="#" class="comments-section-delete-btn text-danger"
-                                                   style="display:none">Smazat</a>
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteModal">Smazat</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -216,7 +220,7 @@ $GLOBALS['page_data'] = [
                         </div>
                     </div>
                     <div class="show-more pb-5 text-center">
-                        <button class="btn btn-outline-primary" style="display:none" type="submit">Zobrazit více
+                        <button class="btn btn-primary" style="display:none" type="submit">Zobrazit více
                         </button>
                     </div>
                     <form id="comment-form" class="needs-validation" novalidate>
@@ -315,3 +319,48 @@ $GLOBALS['page_data'] = [
         </div>
     </div>
 </article>
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editace komentáře</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+            </div>
+            <form id="editCommentForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" name="comment_id">
+                        <label for="edit-message-text" class="col-form-label">Váš komentář:</label>
+                        <textarea class="form-control" id="edit-message-text" name="message"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavřít</button>
+                    <button type="submit" class="btn btn-primary">Editovat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Smazat komentář</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+            </div>
+            <form id="deleteCommentForm">
+                <input type="hidden" name="comment_id">
+                <div class="modal-body">
+                    Opravdu si přejete nenávratně smazat komentář?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavřít</button>
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
